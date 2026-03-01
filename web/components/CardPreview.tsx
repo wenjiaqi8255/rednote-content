@@ -8,7 +8,7 @@
 
 import { useRef, useEffect, useState } from 'react';
 import html2canvas from 'html2canvas';
-import { generateCardHtml, type Theme } from '@/lib/card-templates';
+import { generateXHSCard, type Theme } from '@/lib/xhs-renderer';
 
 interface CardPreviewProps {
   markdown: string;
@@ -26,7 +26,7 @@ export default function CardPreview({ markdown, theme, mode, onCapture }: CardPr
   // Generate HTML when markdown or theme changes
   useEffect(() => {
     const generateHtml = async () => {
-      const html = await generateCardHtml(markdown, theme);
+      const html = await generateXHSCard(markdown, theme);
       setHtmlContent(html);
     };
 
@@ -40,12 +40,18 @@ export default function CardPreview({ markdown, theme, mode, onCapture }: CardPr
     setIsCapturing(true);
 
     try {
-      const canvas = await html2canvas(cardRef.current, {
+      // Get the actual dimensions
+      const element = cardRef.current;
+      const rect = element.getBoundingClientRect();
+
+      // Capture with html2canvas using only valid type options
+      const canvas = await html2canvas(element, {
         useCORS: true,
         logging: false,
         background: '#ffffff',
-        scale: 2, // 2x DPI for high resolution
-      } as any); // Type assertion needed due to incomplete @types/html2canvas definitions
+        width: rect.width * 2,
+        height: rect.height * 2,
+      });
 
       const dataUrl = canvas.toDataURL('image/png');
       setCapturedImage(dataUrl);

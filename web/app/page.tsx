@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Form from '@/components/Form';
 import CardPreview from '@/components/CardPreview';
-import type { Theme } from '@/lib/card-templates';
+import type { Theme } from '@/lib/xhs-renderer';
 
 interface FormData {
   markdown: string;

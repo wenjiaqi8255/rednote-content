@@ -20,13 +20,45 @@ jest.mock('html2canvas', () => ({
   ),
 }));
 
-// Mock fetch for theme CSS loading
-global.fetch = jest.fn(() =>
-  Promise.resolve({
+// Mock marked
+jest.mock('marked', () => ({
+  marked: {
+    parse: jest.fn((md: string) => {
+      // Simple markdown mock
+      return md
+        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+        .replace(/\n\n/gim, '</p><p>')
+        .replace(/^(?!<)/gim, '<p>')
+        .replace(/(?<![>])$/gim, '</p>');
+    }),
+  },
+}));
+
+// Mock fetch for template and CSS
+const mockCardTemplate = `
+<!DOCTYPE html>
+<html>
+<head><title>Card</title></head>
+<body>
+  <div class="card-container">
+    <div class="card-content">{{CONTENT}}</div>
+  </div>
+</body>
+</html>
+`;
+
+global.fetch = jest.fn((url: string) => {
+  if (url.includes('card.html')) {
+    return Promise.resolve({
+      ok: true,
+      text: () => Promise.resolve(mockCardTemplate),
+    });
+  }
+  return Promise.resolve({
     ok: true,
-    text: () => Promise.resolve('.card-content { color: #475569; }'),
-  })
-) as jest.Mock;
+    text: () => Promise.resolve('mock css'),
+  });
+}) as jest.Mock;
 
 describe('CardPreview Component', () => {
   const defaultProps = {
