@@ -17,6 +17,35 @@ export interface RenderResult {
   filename: string;
 }
 
+/**
+ * 启动浏览器（带 Vercel Serverless 兼容配置和重试机制）
+ */
+async function launchBrowserWithRetry(retries = 3): Promise<ReturnType<typeof chromium.launch>> {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const browser = await chromium.launch({
+        headless: true,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-accelerated-2d-canvas',
+          '--no-first-run',
+          '--no-zygote',
+          '--disable-gpu',
+          '--single-process', // Vercel Serverless 关键参数
+        ],
+      });
+      return browser;
+    } catch (error) {
+      if (i === retries - 1) throw error;
+      console.log(`Browser launch attempt ${i + 1} failed, retrying...`);
+      await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+    }
+  }
+  throw new Error('Failed to launch browser after all retries');
+}
+
 // 可用主题列表
 export const AVAILABLE_THEMES = [
   'default',
@@ -59,10 +88,8 @@ export async function renderMarkdown(options: RenderOptions): Promise<RenderResu
   // 根据模式分页
   const parts = splitContent(content, mode);
 
-  // 启动浏览器
-  const browser = await chromium.launch({
-    headless: true,
-  });
+  // 启动浏览器（Vercel Serverless 兼容配置）
+  const browser = await launchBrowserWithRetry();
 
   const context = await browser.newContext({
     viewport: { width, height: height * dpr },

@@ -1,0 +1,10 @@
+{
+  "buildCommand": "npm run build",
+  "functions": {
+    "app/api/render/**": {
+      "maxDuration": 60,
+      "memory": 1024
+    }
+  },
+  "installCommand": "npm install && npx playwright install chromium"
+}
