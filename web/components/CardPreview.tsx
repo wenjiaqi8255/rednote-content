@@ -41,11 +41,11 @@ export default function CardPreview({ markdown, theme, mode, onCapture }: CardPr
 
     try {
       const canvas = await html2canvas(cardRef.current, {
-        scale: 2, // DPR 2x for high resolution
         useCORS: true,
         logging: false,
-        backgroundColor: '#ffffff',
-      });
+        background: '#ffffff',
+        scale: 2, // 2x DPI for high resolution
+      } as any); // Type assertion needed due to incomplete @types/html2canvas definitions
 
       const dataUrl = canvas.toDataURL('image/png');
       setCapturedImage(dataUrl);
