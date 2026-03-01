@@ -1,4 +1,4 @@
-import { chromium } from '@playwright/test';
+import { chromium } from 'playwright';
 import { marked } from 'marked';
 import * as fs from 'fs/promises';
 import * as path from 'path';
