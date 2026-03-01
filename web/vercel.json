@@ -1,10 +1,9 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "npx playwright install --with-deps chromium && npm run build",
   "functions": {
     "app/api/render/**": {
       "maxDuration": 60,
       "memory": 1024
     }
-  },
-  "installCommand": "npm install && npx playwright install chromium"
+  }
 }

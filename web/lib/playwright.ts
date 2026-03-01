@@ -3,6 +3,11 @@ import { marked } from 'marked';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
+// Vercel Serverless 环境下设置浏览器路径
+if (process.env.VERCEL) {
+  process.env.PLAYWRIGHT_BROWSERS_PATH = '/home/sbx_user1051/.cache/ms-playwright';
+}
+
 export interface RenderOptions {
   content: string;
   theme?: string;
