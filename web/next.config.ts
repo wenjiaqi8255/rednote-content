@@ -8,13 +8,9 @@ const nextConfig: NextConfig = {
     },
   },
 
-  // Webpack 配置
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      // 在服务器端忽略 Playwright 的客户端模块
-      config.externals = [...(config.externals || []), 'playwright-chromium'];
-    }
-    return config;
+  // Turbopack 配置（Next.js 16 默认）
+  turbopack: {
+    // 空配置以启用 Turbopack
   },
 
   // 环境变量
