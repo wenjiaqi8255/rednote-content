@@ -17,7 +17,7 @@ const customJestConfig = {
     '**/__tests__/**/*.test.tsx'
   ],
   transformIgnorePatterns: [
-    '/node_modules/(?!(marked)/)',
+    '/node_modules/(?!(marked|markdown-it|markdown-it-katex|markdown-it-anchor|highlight.js)/)',
     '^.+\\.module\\.(css|sass|scss)$',
   ],
   transform: {

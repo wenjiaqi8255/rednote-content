@@ -34,29 +34,6 @@ global.fetch = jest.fn((url: string) => {
   });
 }) as jest.Mock;
 
-// Mock marked with proper markdown parsing
-jest.mock('marked', () => ({
-  marked: {
-    parse: jest.fn((md: string) => {
-      // Simple mock that converts basic markdown
-      let html = md
-        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-        .replace(/^\* (.*$)/gim, '<ul><li>$1</li></ul>')
-        .replace(/^\- (.*$)/gim, '<ul><li>$1</li></ul>')
-        .replace(/```(\w+)?\n([\s\S]*?)```/gim, '<pre><code>$2</code></pre>')
-        .replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
-        .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/gim, '<em>$1</em>')
-        .replace(/\n\n/gim, '</p><p>')
-        .replace(/^(?!<[h|u|o|b|p|pre])/gim, '<p>')
-        .replace(/(?<![>])$/gim, '</p>');
-      return html;
-    }),
-  },
-}));
-
 import { convertMarkdownToHtml, generateXHSCard } from '../xhs-renderer';
 
 describe('XHS Renderer - convertMarkdownToHtml', () => {
@@ -95,7 +72,7 @@ console.log(x);
     const html = await convertMarkdownToHtml(markdown, 'default');
 
     // Should support all markdown features
-    expect(html).toContain('<h2>'); // h2 heading
+    expect(html).toMatch(/<h2/); // h2 heading (may have attributes)
     expect(html).toContain('<ul>'); // unordered list
     expect(html).toContain('<pre><code'); // code block
     expect(html).toContain('<blockquote>'); // blockquote
@@ -109,7 +86,7 @@ console.log(x);
 内容`;
     const html = await convertMarkdownToHtml(markdown, 'default');
 
-    expect(html).toContain('<h1>');
+    expect(html).toMatch(/<h1/); // May have attributes from anchor plugin
     expect(html).toContain('标题');
     expect(html).not.toContain('tags-container');
   });
@@ -150,7 +127,7 @@ describe('XHS Renderer - generateXHSCard', () => {
     const html = await generateXHSCard('# Hello\n\nWorld', 'default');
 
     expect(html).toContain('card-content');
-    expect(html).toContain('<h1>');
+    expect(html).toMatch(/<h1/); // May have attributes from anchor plugin
     expect(html).toContain('Hello');
     expect(html).toContain('World');
   });
@@ -178,5 +155,114 @@ describe('XHS Renderer - generateXHSCard', () => {
     await expect(
       generateXHSCard('# Test', 'invalid-theme' as any)
     ).rejects.toThrow();
+  });
+});
+
+describe('XHS Renderer - Complete Markdown Support', () => {
+  test('should render tables correctly', async () => {
+    const markdown = `
+| 列1 | 列2 | 列3 |
+|-----|-----|-----|
+| 数据1 | 数据2 | 数据3 |
+`;
+    const html = await convertMarkdownToHtml(markdown, 'default');
+    expect(html).toContain('<table>');
+    expect(html).toContain('<thead>');
+    expect(html).toContain('<tbody>');
+  });
+
+  test('should render inline LaTeX math', async () => {
+    const markdown = '爱因斯坦质能方程: $E = mc^2$';
+    const html = await convertMarkdownToHtml(markdown, 'default');
+    // KaTeX renders to span elements
+    expect(html).toMatch(/<span[^>]*katex/);
+    expect(html).toContain('E = mc');
+  });
+
+  test('should render block LaTeX math', async () => {
+    const markdown = `
+$$
+\\int_0^1 x^2 dx = \\frac{1}{3}
+$$
+`;
+    const html = await convertMarkdownToHtml(markdown, 'default');
+    // KaTeX renders block math to span with display mode
+    expect(html).toMatch(/<span[^>]*katex/);
+    expect(html).toContain('display');
+  });
+
+  test('should render code blocks with syntax highlighting', async () => {
+    const markdown = `
+\`\`\`javascript
+function hello() {
+  console.log("Hello World");
+}
+\`\`\`
+`;
+    const html = await convertMarkdownToHtml(markdown, 'default');
+    expect(html).toContain('<pre><code');
+    expect(html).toContain('javascript');
+    expect(html).toContain('function');
+  });
+
+  test('should handle nested lists and blockquotes', async () => {
+    const markdown = `
+> 引用
+> - 嵌套列表项1
+> - 嵌套列表项2
+
+- 顶级列表
+  - 嵌套列表
+`;
+    const html = await convertMarkdownToHtml(markdown, 'default');
+    expect(html).toContain('<blockquote>');
+    expect(html).toContain('<ul>');
+    expect(html).toContain('<li>'); // List items don't have class in markdown-it
+  });
+
+  test('should handle complex markdown with multiple features', async () => {
+    const markdown = `
+# 完整功能测试
+
+## 表格测试
+| 功能 | 状态 |
+|-----|------|
+| 表格 | ✅ |
+| LaTeX | ✅ |
+
+## LaTeX测试
+
+行内公式: $E = mc^2$ 和 $\\sum_{i=1}^n i = \\frac{n(n+1)}{2}$
+
+块级公式:
+$$
+\\int_0^1 x^2 dx = \\left[ \\frac{x^3}{3} \\right]_0^1 = \\frac{1}{3}
+$$
+
+## 代码测试
+\`\`\`python
+def hello():
+    print("Hello, World!")
+    return 42
+\`\`\`
+
+## 嵌套测试
+> 引用段落
+> - 列表项1
+> - 列表项2
+
+#标签1 #标签2 #标签3
+`;
+    const html = await convertMarkdownToHtml(markdown, 'default');
+
+    // Check all features are present
+    expect(html).toMatch(/<h1/); // May have attributes
+    expect(html).toMatch(/<h2/); // May have attributes
+    expect(html).toContain('<table>');
+    expect(html).toMatch(/<span[^>]*katex/);  // LaTeX
+    expect(html).toContain('<pre><code');
+    expect(html).toContain('<blockquote>');
+    expect(html).toContain('tags-container');
+    expect(html).toContain('#标签1');
   });
 });

@@ -1,19 +1,49 @@
 /**
- * XHS Renderer - Ported from Auto-Redbook-Skills render_xhs_v2.js
+ * XHS Renderer - Ported from Auto-Redbook-Skills render_xhs_v2.py
  *
- * Implements:
- * - convertMarkdownToHtml() (lines 238-259)
+ * Implements complete Markdown + LaTeX rendering using markdown-it
+ * - convertMarkdownToHtml() (Python lines 261-287)
  * - generateXHSCard() using card.html template
+ *
+ * Features:
+ * - Tables support (via markdown-it)
+ * - LaTeX math (via markdown-it-katex)
+ * - Syntax highlighting (via highlight.js)
+ * - Complete markdown extensions (tables, extra, nl2br)
  */
 
-// Import marked - will be mocked in tests
-let marked: any;
-try {
-  marked = require('marked').marked;
-} catch {
-  // Fallback for browser environment
-  marked = (globalThis as any).marked;
-}
+import MarkdownIt from 'markdown-it';
+import katex from 'markdown-it-katex';
+import anchor from 'markdown-it-anchor';
+import hljs from 'highlight.js';
+import type { PluginSimple } from 'markdown-it';
+
+// Configure markdown-it with all required extensions
+const md: MarkdownIt = new MarkdownIt({
+  html: true,        // Enable HTML tags in source
+  linkify: true,     // Autoconvert URL-like text to links
+  typographer: true, // Enable some language-neutral replacement and quotes beautification
+  highlight: (str: string, lang: string) => {
+    // Syntax highlighting using highlight.js
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return hljs.highlight(str, { language: lang }).value;
+      } catch (__) {
+        // Fallback to auto-detect on error
+      }
+    }
+    // Try auto-detection for unknown languages
+    try {
+      const result = hljs.highlightAuto(str);
+      return result.value;
+    } catch (__) {
+      // Fallback to escaped text
+      return '';
+    }
+  },
+})
+.use(anchor as PluginSimple)     // Add anchor links to headers
+.use(katex as PluginSimple);     // Add LaTeX math support
 
 // Available themes
 const AVAILABLE_THEMES = [
@@ -42,8 +72,13 @@ const THEME_COLORS: Record<Theme, string> = {
 };
 
 /**
- * Convert Markdown to HTML with tag extraction
- * Ported from render_xhs_v2.js lines 238-259
+ * Convert Markdown to HTML with tag extraction and LaTeX support
+ * Ported from render_xhs_v2.py lines 261-287
+ *
+ * Enhancements over Python version:
+ * - Uses markdown-it instead of python-markdown
+ * - Built-in KaTeX support (no external config needed)
+ * - Better Chinese language support
  */
 export async function convertMarkdownToHtml(
   mdContent: string,
@@ -51,7 +86,7 @@ export async function convertMarkdownToHtml(
 ): Promise<string> {
   const accent = THEME_COLORS[theme];
 
-  // 1. Extract tags from end of markdown
+  // 1. Extract tags from end of markdown (same as Python version)
   const tagsPattern = /((?:#[\w\u4e00-\u9fa5]+\s*)+)$/m;
   const tagsMatch = mdContent.match(tagsPattern);
   let tagsHtml = "";
@@ -70,8 +105,9 @@ export async function convertMarkdownToHtml(
     }
   }
 
-  // 2. Use marked to render markdown
-  const html = marked.parse(mdContent, { breaks: true, gfm: true });
+  // 2. Use markdown-it to render with full feature support
+  // Includes: tables, LaTeX, syntax highlighting, lists, quotes, etc.
+  const html = md.render(mdContent);
   return html + tagsHtml;
 }
 

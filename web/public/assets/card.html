@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1080">
     <title>小红书卡片</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
         
@@ -182,6 +183,54 @@
             font-weight: 500;
         }
         
+        /* KaTeX LaTeX 数学公式样式 */
+        .card-content .katex {
+            font-size: 1.1em;
+        }
+
+        .card-content .katex-display {
+            margin: 40px 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        /* 表格样式 */
+        .card-content table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 35px 0;
+            font-size: 38px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-content thead {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+        }
+
+        .card-content th {
+            padding: 20px 25px;
+            text-align: left;
+            font-weight: 600;
+            color: #1e293b;
+            border-bottom: 3px solid #6366f1;
+        }
+
+        .card-content td {
+            padding: 18px 25px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #475569;
+        }
+
+        .card-content tr:last-child td {
+            border-bottom: none;
+        }
+
+        .card-content tr:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
         /* 信息卡片样式 */
         .info-card {
             margin: 40px 0;
