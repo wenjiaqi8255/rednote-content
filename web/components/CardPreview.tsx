@@ -141,7 +141,7 @@ export default function CardPreview({ markdown, theme, mode: _mode, onCapture, s
         <button
           onClick={handleCapture}
           disabled={isCapturing}
-          className="flex-1 bg-purple-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="flex-1 bg-gray-900 text-white font-semibold py-3 px-6 rounded-md hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
         >
           {isCapturing ? 'Capturing...' : '📸 Capture Image'}
         </button>
@@ -149,7 +149,7 @@ export default function CardPreview({ markdown, theme, mode: _mode, onCapture, s
         <button
           onClick={handleDownload}
           disabled={!capturedImage}
-          className="flex-1 bg-green-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="flex-1 bg-gray-700 text-white font-semibold py-3 px-6 rounded-md hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
         >
           ⬇️ Download
         </button>

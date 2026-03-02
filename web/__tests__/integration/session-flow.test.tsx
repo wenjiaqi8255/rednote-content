@@ -37,7 +37,7 @@ describe('Integration - Complete User Flow', () => {
     expect(screen.getByText(/请选择或创建一个会话/)).toBeInTheDocument();
 
     // Step 1: Create new session
-    const createButton = screen.getByRole('button', { name: /\+ 创建新会话/ });
+    const createButton = screen.getByRole('button', { name: /创建新卡片/ });
     fireEvent.click(createButton);
 
     // Step 2: Wait for form to appear in SessionDetail

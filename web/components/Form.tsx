@@ -63,7 +63,7 @@ export default function Form({ onSubmit, isLoading, defaultValue }: FormProps) {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="例如：效率工具集锦"
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-base"
+          className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-base"
         />
       </div>
 
@@ -79,11 +79,11 @@ export default function Form({ onSubmit, isLoading, defaultValue }: FormProps) {
           placeholder="# 标题&#10;&#10;这是正文内容...&#10;&#10;---&#10;&#10;这是第二张卡片"
           required
           rows={12}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-base font-mono"
+          className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-base font-mono"
           style={{ fontSize: '16px' }} // 防止 iOS 自动缩放
         />
         {recommendedTheme && recommendedTheme !== 'default' && (
-          <p className="mt-2 text-sm text-purple-600">
+          <p className="mt-2 text-sm text-gray-600">
             💡 推荐主题：<strong>{recommendedTheme}</strong>
           </p>
         )}
@@ -98,7 +98,7 @@ export default function Form({ onSubmit, isLoading, defaultValue }: FormProps) {
           id="theme"
           value={theme}
           onChange={(e) => setTheme(e.target.value)}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-base"
+          className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-base"
         >
           <option value="default">默认</option>
           <option value="playful-geometric">趣味几何</option>
@@ -120,18 +120,18 @@ export default function Form({ onSubmit, isLoading, defaultValue }: FormProps) {
           id="mode"
           value={mode}
           onChange={(e) => setMode(e.target.value)}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-base"
+          className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-base"
         >
           <option value="separator">手动分页（用 --- 分隔）</option>
           <option value="auto-split">自动分页（按段落拆分）</option>
         </select>
       </div>
 
-      {/* 提交按钮 */}
+      {/* 提交按钮 - Minimal gray */}
       <button
         type="submit"
         disabled={isLoading || !markdown.trim()}
-        className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-4 px-6 rounded-lg hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+        className="w-full bg-gray-900 text-white font-semibold py-4 px-6 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 disabled:bg-gray-300 disabled:cursor-not-allowed text-lg transition-colors"
       >
         {isLoading ? '生成中...' : '生成小红书卡片'}
       </button>

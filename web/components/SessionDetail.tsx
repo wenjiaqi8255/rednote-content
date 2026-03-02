@@ -9,10 +9,10 @@ export default function SessionDetail() {
 
   if (!currentSession) {
     return (
-      <div className="h-full flex items-center justify-center bg-white rounded-lg border-2 border-dashed border-gray-300">
+      <div className="h-full flex items-center justify-center bg-white rounded-lg border border-gray-200">
         <div className="text-center">
-          <div className="text-6xl mb-4">📝</div>
-          <h3 className="text-xl font-semibold text-gray-700 mb-2">
+          <div className="text-6xl mb-4 opacity-30">⋄</div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
             请选择或创建一个会话
           </h3>
           <p className="text-gray-500">
@@ -28,10 +28,10 @@ export default function SessionDetail() {
   };
 
   return (
-    <div className="h-full flex flex-col bg-white rounded-lg shadow-md overflow-hidden">
-      {/* Header */}
+    <div className="h-full flex flex-col bg-white rounded-lg shadow-sm overflow-hidden">
+      {/* Header - Clean with bottom line */}
       <div className="p-4 border-b border-gray-200 bg-gray-50">
-        <h2 className="text-lg font-bold text-gray-900">
+        <h2 className="text-lg font-semibold text-gray-900">
           {currentSession.title || '未命名会话'}
         </h2>
         <p className="text-sm text-gray-500">
@@ -77,11 +77,11 @@ export default function SessionDetail() {
             <h3 className="text-md font-semibold text-gray-800 mb-3">
               已保存的图片
             </h3>
-            <div className="bg-gray-50 rounded-lg p-4">
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
               <img
                 src={currentSession.imageData}
                 alt="Saved card"
-                className="w-full h-auto rounded-lg shadow-md border-2 border-gray-200"
+                className="w-full h-auto rounded-lg shadow-sm border border-gray-200"
               />
             </div>
           </div>

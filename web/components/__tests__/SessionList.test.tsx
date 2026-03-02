@@ -39,8 +39,8 @@ describe('SessionList Component - TDD', () => {
       </StorageProvider>
     );
 
-    expect(screen.getByText(/暂无会话/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /\+ 创建新会话/ })).toBeInTheDocument();
+    expect(screen.getByText(/开始创作/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /创建新卡片/ })).toBeInTheDocument();
   });
 
   // TEST 12: Render session list
@@ -149,7 +149,7 @@ describe('SessionList Component - TDD', () => {
       </StorageProvider>
     );
 
-    const createButton = screen.getByRole('button', { name: /\+ 创建新会话/ });
+    const createButton = screen.getByRole('button', { name: /创建新卡片/ });
     fireEvent.click(createButton);
 
     expect(mockUseStorageContext.createSession).toHaveBeenCalled();
@@ -183,8 +183,8 @@ describe('SessionList Component - TDD', () => {
 
     const { container } = render(<SessionList />);
 
-    // Current session should have purple border class
-    const currentSessionElement = container.querySelector('.border-purple-500');
+    // Current session should have gray background class
+    const currentSessionElement = container.querySelector('.bg-gray-50');
     expect(currentSessionElement).toBeInTheDocument();
     expect(currentSessionElement).toHaveTextContent('Session 2');
   });
