@@ -5,7 +5,7 @@ import Form from './Form';
 import CardPreview from './CardPreview';
 
 export default function SessionDetail() {
-  const { currentSession, updateCurrentSession, saveCurrentSessionImage } = useStorageContext();
+  const { currentSession, updateCurrentSession } = useStorageContext();
 
   if (!currentSession) {
     return (

@@ -18,7 +18,7 @@ interface CardPreviewProps {
   sessionId?: string; // Optional: if provided, saves image to Local Storage
 }
 
-export default function CardPreview({ markdown, theme, mode, onCapture, sessionId }: CardPreviewProps) {
+export default function CardPreview({ markdown, theme, mode: _mode, onCapture, sessionId }: CardPreviewProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [htmlContent, setHtmlContent] = useState('');
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
