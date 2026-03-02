@@ -1,0 +1,191 @@
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import SessionList from '../SessionList';
+import { StorageProvider } from '@/contexts/StorageContext';
+import type { Session } from '@/types/session';
+
+// Mock the useStorageContext
+const mockUseStorageContext = {
+  sessions: [],
+  currentSession: null,
+  createSession: jest.fn(),
+  deleteSession: jest.fn(),
+  selectSession: jest.fn(),
+  updateCurrentSession: jest.fn(),
+  saveCurrentSessionImage: jest.fn(),
+};
+
+jest.mock('@/contexts/StorageContext', () => ({
+  useStorageContext: () => mockUseStorageContext,
+  StorageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
+// Mock window.confirm
+global.confirm = jest.fn(() => true);
+
+describe('SessionList Component - TDD', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  // TEST 11: Render empty state
+  test('renders empty state when no sessions', () => {
+    mockUseStorageContext.sessions = [] as any[];
+    mockUseStorageContext.currentSession = null;
+
+    render(
+      <StorageProvider>
+        <SessionList />
+      </StorageProvider>
+    );
+
+    expect(screen.getByText(/暂无会话/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /\+ 创建新会话/ })).toBeInTheDocument();
+  });
+
+  // TEST 12: Render session list
+  test('renders list of sessions', () => {
+    const mockSessions: Session[] = [
+      {
+        id: 'session-1',
+        title: 'Session 1',
+        markdown: '# Test 1',
+        theme: 'default',
+        mode: 'separator',
+        createdAt: Date.now() - 10000,
+        updatedAt: Date.now() - 5000,
+      },
+      {
+        id: 'session-2',
+        title: 'Session 2',
+        markdown: '# Test 2',
+        theme: 'playful-geometric',
+        mode: 'separator',
+        createdAt: Date.now() - 5000,
+        updatedAt: Date.now() - 1000,
+      },
+    ];
+
+    mockUseStorageContext.sessions = mockSessions;
+    mockUseStorageContext.currentSession = mockSessions[0];
+
+    render(
+      <StorageProvider>
+        <SessionList />
+      </StorageProvider>
+    );
+
+    expect(screen.getByText('Session 1')).toBeInTheDocument();
+    expect(screen.getByText('Session 2')).toBeInTheDocument();
+  });
+
+  // TEST 13: Click to select session
+  test('selects session when clicked', () => {
+    const mockSessions: Session[] = [
+      {
+        id: 'test-session',
+        title: 'Test Session',
+        markdown: '# Test',
+        theme: 'default',
+        mode: 'separator',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+    ];
+
+    mockUseStorageContext.sessions = mockSessions;
+    mockUseStorageContext.currentSession = mockSessions[0];
+
+    render(
+      <StorageProvider>
+        <SessionList />
+      </StorageProvider>
+    );
+
+    const sessionElement = screen.getByText('Test Session');
+    fireEvent.click(sessionElement);
+
+    expect(mockUseStorageContext.selectSession).toHaveBeenCalledWith('test-session');
+  });
+
+  // TEST 14: Delete session
+  test('deletes session when delete button clicked', () => {
+    const mockSessions: Session[] = [
+      {
+        id: 'to-delete',
+        title: 'To Delete',
+        markdown: '# Test',
+        theme: 'default',
+        mode: 'separator',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+    ];
+
+    mockUseStorageContext.sessions = mockSessions;
+    mockUseStorageContext.currentSession = mockSessions[0];
+
+    render(
+      <StorageProvider>
+        <SessionList />
+      </StorageProvider>
+    );
+
+    // Find and click the delete button
+    const deleteButton = screen.getByLabelText(/删除/i);
+    fireEvent.click(deleteButton);
+
+    expect(mockUseStorageContext.deleteSession).toHaveBeenCalledWith('to-delete');
+  });
+
+  // Additional test: Create new session button
+  test('calls createSession when create button clicked', () => {
+    mockUseStorageContext.sessions = [] as any[];
+    mockUseStorageContext.currentSession = null;
+
+    render(
+      <StorageProvider>
+        <SessionList />
+      </StorageProvider>
+    );
+
+    const createButton = screen.getByRole('button', { name: /\+ 创建新会话/ });
+    fireEvent.click(createButton);
+
+    expect(mockUseStorageContext.createSession).toHaveBeenCalled();
+  });
+
+  // Additional test: Highlight current session
+  test('highlights current session in list', () => {
+    const mockSessions: Session[] = [
+      {
+        id: 'session-1',
+        title: 'Session 1',
+        markdown: '# Test 1',
+        theme: 'default',
+        mode: 'separator',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+      {
+        id: 'session-2',
+        title: 'Session 2',
+        markdown: '# Test 2',
+        theme: 'default',
+        mode: 'separator',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+    ];
+
+    mockUseStorageContext.sessions = mockSessions;
+    mockUseStorageContext.currentSession = mockSessions[1]; // session-2 is current
+
+    const { container } = render(<SessionList />);
+
+    // Current session should have purple border class
+    const currentSessionElement = container.querySelector('.border-purple-500');
+    expect(currentSessionElement).toBeInTheDocument();
+    expect(currentSessionElement).toHaveTextContent('Session 2');
+  });
+});

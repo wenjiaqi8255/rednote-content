@@ -11,13 +11,19 @@ interface FormProps {
     title: string;
   }) => void;
   isLoading: boolean;
+  defaultValue?: {
+    title?: string;
+    markdown?: string;
+    theme?: string;
+    mode?: string;
+  };
 }
 
-export default function Form({ onSubmit, isLoading }: FormProps) {
-  const [markdown, setMarkdown] = useState('');
-  const [theme, setTheme] = useState('default');
-  const [mode, setMode] = useState('separator');
-  const [title, setTitle] = useState('');
+export default function Form({ onSubmit, isLoading, defaultValue }: FormProps) {
+  const [markdown, setMarkdown] = useState(defaultValue?.markdown || '');
+  const [theme, setTheme] = useState(defaultValue?.theme || 'default');
+  const [mode, setMode] = useState(defaultValue?.mode || 'separator');
+  const [title, setTitle] = useState(defaultValue?.title || '');
   const [recommendedTheme, setRecommendedTheme] = useState<string | null>(null);
 
   const handleMarkdownChange = (value: string) => {

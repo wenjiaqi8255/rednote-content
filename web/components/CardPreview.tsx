@@ -15,13 +15,36 @@ interface CardPreviewProps {
   theme: Theme;
   mode: string;
   onCapture?: (dataUrl: string) => void;
+  sessionId?: string; // Optional: if provided, saves image to Local Storage
 }
 
-export default function CardPreview({ markdown, theme, mode, onCapture }: CardPreviewProps) {
+export default function CardPreview({ markdown, theme, mode, onCapture, sessionId }: CardPreviewProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [htmlContent, setHtmlContent] = useState('');
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [savedImageData, setSavedImageData] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
+
+  // Load saved image from Local Storage on mount (if sessionId provided)
+  useEffect(() => {
+    if (!sessionId) return;
+
+    try {
+      const storageKey = 'rednote-sessions';
+      const stored = localStorage.getItem(storageKey);
+
+      if (stored) {
+        const data = JSON.parse(stored);
+        const session = data.sessions?.find((s: any) => s.id === sessionId);
+
+        if (session?.imageData) {
+          setSavedImageData(session.imageData);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load saved image:', error);
+    }
+  }, [sessionId]);
 
   // Generate HTML when markdown or theme changes
   useEffect(() => {
@@ -55,9 +78,31 @@ export default function CardPreview({ markdown, theme, mode, onCapture }: CardPr
 
       const dataUrl = canvas.toDataURL('image/png');
       setCapturedImage(dataUrl);
+      setSavedImageData(dataUrl);
 
       if (onCapture) {
         onCapture(dataUrl);
+      }
+
+      // Save to Local Storage if sessionId provided
+      if (sessionId) {
+        try {
+          const storageKey = 'rednote-sessions';
+          const stored = localStorage.getItem(storageKey);
+          const data = stored ? JSON.parse(stored) : { sessions: [], currentSessionId: null, lastUpdated: Date.now() };
+
+          const sessionIndex = data.sessions?.findIndex((s: any) => s.id === sessionId);
+
+          if (sessionIndex !== -1) {
+            data.sessions[sessionIndex].imageData = dataUrl;
+            data.sessions[sessionIndex].updatedAt = Date.now();
+            data.lastUpdated = Date.now();
+
+            localStorage.setItem(storageKey, JSON.stringify(data));
+          }
+        } catch (error) {
+          console.error('Failed to save image to localStorage:', error);
+        }
       }
     } catch (error) {
       console.error('Capture failed:', error);
@@ -110,13 +155,15 @@ export default function CardPreview({ markdown, theme, mode, onCapture }: CardPr
         </button>
       </div>
 
-      {/* Captured Image Preview */}
-      {capturedImage && (
+      {/* Saved/Captured Image Preview */}
+      {(savedImageData || capturedImage) && (
         <div className="mt-4">
-          <h3 className="text-lg font-semibold mb-2">Captured Image:</h3>
+          <h3 className="text-lg font-semibold mb-2">
+            {savedImageData && !capturedImage ? 'Saved Image:' : 'Captured Image:'}
+          </h3>
           <img
-            src={capturedImage}
-            alt="Captured card"
+            src={(capturedImage || savedImageData) as string}
+            alt="Saved card"
             className="w-full h-auto rounded-lg shadow-md border-2 border-gray-200"
           />
         </div>
