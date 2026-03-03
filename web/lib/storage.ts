@@ -3,6 +3,18 @@ import type { Session, StorageData } from '@/types/session';
 const STORAGE_KEY = 'rednote-sessions';
 
 /**
+ * Generates a random UUID v4
+ * Browser-compatible alternative to crypto.randomUUID()
+ */
+function generateUUID(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
+/**
  * Creates a new session with generated ID and timestamps
  */
 export function createSession(
@@ -10,7 +22,7 @@ export function createSession(
 ): Session {
   return {
     ...data,
-    id: crypto.randomUUID(),
+    id: generateUUID(),
     createdAt: Date.now(),
     updatedAt: Date.now(),
   };

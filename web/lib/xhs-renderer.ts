@@ -59,6 +59,26 @@ const AVAILABLE_THEMES = [
 
 export type Theme = typeof AVAILABLE_THEMES[number];
 
+/**
+ * Split markdown content by --- separator (三道杠)
+ * Returns array of content blocks
+ * Ported from render_xhs.js lines 192-197
+ *
+ * @param markdown - The markdown content to split
+ * @returns Array of content blocks (trimmed, non-empty)
+ */
+export function splitMarkdownBySeparator(markdown: string): string[] {
+  if (!markdown.trim()) return [''];
+
+  // Split by \n---+\n pattern (three or more hyphens on their own line)
+  const parts = markdown.split(/\n-{3,}\n/);
+
+  // Trim each part and filter out empty parts
+  return parts
+    .map(part => part.trim())
+    .filter(part => part.length > 0);
+}
+
 // Theme accent colors (simplified from render_xhs_v2.js STYLES)
 const THEME_COLORS: Record<Theme, string> = {
   'default': '#6366f1',

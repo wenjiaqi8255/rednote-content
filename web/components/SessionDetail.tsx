@@ -3,6 +3,7 @@
 import { useStorageContext } from '@/contexts/StorageContext';
 import Form from './Form';
 import CardPreview from './CardPreview';
+import MultiCardPreview from './MultiCardPreview';
 
 export default function SessionDetail() {
   const { currentSession, updateCurrentSession } = useStorageContext();
@@ -47,6 +48,7 @@ export default function SessionDetail() {
             编辑内容
           </h3>
           <Form
+            key={currentSession.id}
             onSubmit={handleFormSubmit}
             isLoading={false}
             defaultValue={{
@@ -63,12 +65,20 @@ export default function SessionDetail() {
           <h3 className="text-md font-semibold text-gray-800 mb-3">
             卡片预览
           </h3>
-          <CardPreview
-            markdown={currentSession.markdown}
-            theme={currentSession.theme as any}
-            mode={currentSession.mode}
-            sessionId={currentSession.id}
-          />
+          {currentSession.mode === 'auto-split' ? (
+            <MultiCardPreview
+              markdown={currentSession.markdown}
+              theme={currentSession.theme as any}
+              sessionId={currentSession.id}
+            />
+          ) : (
+            <CardPreview
+              markdown={currentSession.markdown}
+              theme={currentSession.theme as any}
+              mode={currentSession.mode}
+              sessionId={currentSession.id}
+            />
+          )}
         </div>
 
         {/* Saved Image Display */}
