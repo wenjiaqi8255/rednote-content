@@ -1,4 +1,35 @@
-@import "tailwindcss";
+/* Font Imports - MUST come first */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   PENCIL DESIGN VARIABLES (Mobile UI)
+   ============================================ */
+
+/* Pencil Design Variables */
+:root {
+  /* Colors - Mobile Design System */
+  --color-white: #FFFFFF;
+  --color-bg-surface: #FAFAFA;
+  --color-text-primary: #0D0D0D;
+  --color-text-secondary: #7A7A7A;
+  --color-text-muted: #B0B0B0;
+  --color-text-placeholder: #D0D0D0;
+  --color-border: #E8E8E8;
+  --color-accent-red: #E42313;
+  --color-accent-green: #22C55E;
+  --color-card-surface: #FFF5F4;
+
+  /* Typography - Mobile */
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Icon Font */
+  --icon-family: 'lucide';
+}
 
 /* ============================================
    NOTION-INSPIRED MINIMALIST DESIGN SYSTEM
@@ -67,11 +98,6 @@
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --duration-fast: 150ms;
   --duration-base: 250ms;
-}
-
-@theme inline {
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
 }
 
 /* ============================================
