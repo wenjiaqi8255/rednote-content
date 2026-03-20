@@ -1,14 +1,25 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import SessionList from '@/components/SessionList';
 import SessionDetail from '@/components/SessionDetail';
 import MobileHeader from '@/components/MobileHeader';
 import { StorageProvider, useStorageContext } from '@/contexts/StorageContext';
+import { useMobileDetection } from '@/lib/hooks/useMobileDetection';
 
 function HomeContent() {
+  const router = useRouter();
+  const isMobile = useMobileDetection();
   const { currentSession } = useStorageContext();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Redirect mobile devices to /mobile route
+  useEffect(() => {
+    if (isMobile) {
+      router.push('/mobile');
+    }
+  }, [isMobile, router]);
 
   const handleToggleMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
