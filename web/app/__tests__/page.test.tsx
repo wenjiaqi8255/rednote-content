@@ -1,6 +1,22 @@
 import { render, screen } from '@testing-library/react';
 import Home from '../page';
 
+// Mock Next.js router
+const mockPush = jest.fn();
+jest.mock('next/navigation', () => ({
+  useRouter() {
+    return {
+      push: mockPush,
+    };
+  },
+}));
+
+// Mock useMobileDetection
+let mockIsMobile = false;
+jest.mock('@/lib/hooks/useMobileDetection', () => ({
+  useMobileDetection: () => mockIsMobile,
+}));
+
 // Mock the components
 jest.mock('@/components/Form', () => {
   return function MockForm() {
@@ -37,10 +53,15 @@ jest.mock('@/components/MobileHeader', () => {
 });
 
 describe('Home Page - Responsive Layout', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockIsMobile = false;
+  });
+
   // TEST 19: Desktop layout
   test('renders desktop layout with sidebar and main content', () => {
     // Mock desktop viewport
-    global.innerWidth = 1024;
+    mockIsMobile = false;
 
     render(<Home />);
 
@@ -52,42 +73,30 @@ describe('Home Page - Responsive Layout', () => {
 
     // Should NOT have sidebar-backdrop (only for mobile menu)
     expect(screen.queryByTestId('sidebar-backdrop')).not.toBeInTheDocument();
+
+    // Should NOT redirect to /mobile
+    expect(mockPush).not.toHaveBeenCalled();
   });
 
-  // TEST 20: Mobile layout
-  test('renders mobile layout with mobile header', () => {
+  // TEST 20: Mobile layout with redirect
+  test('redirects to /mobile on mobile devices', () => {
     // Mock mobile viewport
-    global.innerWidth = 375;
+    mockIsMobile = true;
 
     render(<Home />);
 
-    // Should have MobileHeader
-    expect(screen.getByTestId('mobile-header')).toBeInTheDocument();
-
-    // Should have sidebar container (hidden initially)
-    const sidebar = screen.getByTestId('sidebar-container');
-    expect(sidebar).toHaveClass('-translate-x-full');
+    // Should redirect to /mobile route
+    expect(mockPush).toHaveBeenCalledWith('/mobile');
   });
 
-  // TEST 21: Mobile menu toggle
-  test('toggles sidebar visibility on mobile', () => {
-    global.innerWidth = 375;
+  // TEST 21: Desktop does not redirect
+  test('does not redirect on desktop devices', () => {
+    // Mock desktop viewport
+    mockIsMobile = false;
 
     render(<Home />);
 
-    // Initial state - sidebar hidden
-    const sidebar = screen.getByTestId('sidebar-container');
-    expect(sidebar).toHaveClass('-translate-x-full');
-
-    // Find and click menu button
-    const header = screen.getByTestId('mobile-header');
-    const menuButton = header.querySelector('button');
-
-    if (menuButton) {
-      menuButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-
-      // After click - sidebar should be visible
-      expect(sidebar).not.toHaveClass('-translate-x-full');
-    }
+    // Should NOT redirect
+    expect(mockPush).not.toHaveBeenCalled();
   });
 });

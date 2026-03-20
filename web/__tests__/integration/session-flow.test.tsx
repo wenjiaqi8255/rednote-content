@@ -3,6 +3,21 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import Home from '@/app/page';
 import { StorageProvider } from '@/contexts/StorageContext';
 
+// Mock Next.js router
+const mockPush = jest.fn();
+jest.mock('next/navigation', () => ({
+  useRouter() {
+    return {
+      push: mockPush,
+    };
+  },
+}));
+
+// Mock useMobileDetection to always return desktop for integration test
+jest.mock('@/lib/hooks/useMobileDetection', () => ({
+  useMobileDetection: () => false,
+}));
+
 // Mock html2canvas to avoid actual image generation
 jest.mock('html2canvas', () => ({
   __esModule: true,
