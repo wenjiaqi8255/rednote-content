@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   createSession,
   loadFromStorage,
@@ -23,20 +23,23 @@ export function useLocalStorage() {
   const currentSession = sessions.find((s) => s.id === currentSessionId) || null;
 
   // Create a new session
-  const createNewSession = (data: Omit<Session, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const createNewSession = useCallback((data: Omit<Session, 'id' | 'createdAt' | 'updatedAt'>) => {
     const newSession = createSession(data);
-    const updatedSessions = [...sessions, newSession];
 
-    setSessions(updatedSessions);
+    // Use functional update to avoid depending on sessions in dependency array
+    setSessions((prevSessions) => {
+      const updatedSessions = [...prevSessions, newSession];
+      saveToStorage(updatedSessions, newSession.id);
+      return updatedSessions;
+    });
+
     setCurrentSessionId(newSession.id);
 
-    saveToStorage(updatedSessions, newSession.id);
-
     return newSession.id;
-  };
+  }, []);
 
   // Delete a session
-  const removeSession = (sessionId: string) => {
+  const removeSession = useCallback((sessionId: string) => {
     // Call the storage function
     deleteSession(sessionId);
 
@@ -44,16 +47,21 @@ export function useLocalStorage() {
     const data = loadFromStorage();
     setSessions(data.sessions);
     setCurrentSessionId(data.currentSessionId);
-  };
+  }, []);
 
   // Select a session as current
-  const selectCurrentSession = (sessionId: string) => {
+  const selectCurrentSession = useCallback((sessionId: string) => {
     setCurrentSessionId(sessionId);
-    saveToStorage(sessions, sessionId);
-  };
+
+    // Use functional update to get latest sessions
+    setSessions((prevSessions) => {
+      saveToStorage(prevSessions, sessionId);
+      return prevSessions;
+    });
+  }, []);
 
   // Update current session
-  const updateCurrent = (
+  const updateCurrent = useCallback((
     updates: Partial<Omit<Session, 'id' | 'createdAt' | 'updatedAt'>>
   ) => {
     if (!currentSessionId) return;
@@ -63,10 +71,10 @@ export function useLocalStorage() {
     // Reload to get updated data
     const data = loadFromStorage();
     setSessions(data.sessions);
-  };
+  }, [currentSessionId]);
 
   // Save image data to current session
-  const saveImage = (imageData: string) => {
+  const saveImage = useCallback((imageData: string) => {
     if (!currentSessionId) return;
 
     updateSession(currentSessionId, { imageData });
@@ -74,7 +82,7 @@ export function useLocalStorage() {
     // Reload to get updated data
     const data = loadFromStorage();
     setSessions(data.sessions);
-  };
+  }, [currentSessionId]);
 
   return {
     sessions,
