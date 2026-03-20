@@ -4,10 +4,29 @@
 
 A Next.js web application for rendering markdown content into XHS (小红书/Xiaohongshu) style cards with complete Markdown + LaTeX support.
 
+## Rules & Skills
+
+- Follow rules in `~/.claude/rules/common/`
+- TypeScript: follow `~/.claude/rules/typescript/`
+
+## Development Server
+
+**Port**: `3002` (to avoid conflicts with other Next.js projects)
+
+```bash
+# Start development server on port 3002
+npm run dev
+
+# Access at http://localhost:3002
+```
+
+**Port Configuration**: The dev server is configured to run on port 3002 to avoid conflicts with other local projects (e.g., VibeTrip on port 3000).
+
 ## Tech Stack
 
 - **Framework**: Next.js 16.1.6 with React 19
 - **Language**: TypeScript
+- **Styling**: Tailwind CSS 3.4.17 (stable version)
 - **Testing**: Jest with jsdom environment
 - **Markdown Rendering**: markdown-it with plugins
 - **Math Rendering**: KaTeX via markdown-it-katex
@@ -144,3 +163,23 @@ Include detailed descriptions with bullet points for significant changes.
 4. Run `npm run build` to verify build succeeds
 5. Commit with conventional commit format
 6. Push to remote repository
+
+## Port Configuration
+
+**Why Port 3002?**
+- Avoids conflict with VibeTrip project (port 3000)
+- Keeps port numbers in the 3000-3100 range for Next.js projects
+- Easy to remember: add 2 to default port 3000
+
+**Configuration:**
+- Dev server: `next dev --port 3002` (in package.json scripts)
+- Production server: `next start --port 3002` (in package.json scripts)
+
+**Checking Port Availability:**
+```bash
+# Check if port 3002 is in use
+lsof -ti:3002
+
+# Kill any process using port 3002
+kill -9 $(lsof -ti:3002)
+```
