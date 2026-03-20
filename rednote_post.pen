@@ -1,0 +1,1630 @@
+{
+  "version": "2.8",
+  "children": [
+    {
+      "type": "frame",
+      "id": "vH6hR",
+      "x": 0,
+      "y": -67,
+      "name": "Home - Sessions",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$bg-primary",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "1l1qe",
+          "name": "Status Bar",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            21,
+            24,
+            0,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "LrDjo",
+              "name": "timeLabel",
+              "fill": "$text-primary",
+              "content": "9:41",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "Yfaql",
+              "name": "statusIcons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "YdKcJ",
+                  "name": "signalIcon",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "Izsuk",
+                  "name": "wifiIcon",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "Drcm8",
+                  "name": "batteryIcon",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "EB2uP",
+          "name": "Nav Bar",
+          "width": "fill_container",
+          "height": 56,
+          "padding": [
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "qDfIE",
+              "name": "appTitle",
+              "fill": "$text-primary",
+              "content": "Rednote Post",
+              "fontFamily": "Space Grotesk",
+              "fontSize": 20,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "cY0Ko",
+              "name": "New Session Button",
+              "width": 36,
+              "height": 36,
+              "fill": "$accent-red",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "fUcax",
+                  "name": "plusIcon",
+                  "width": 18,
+                  "height": 18,
+                  "iconFontName": "plus",
+                  "iconFontFamily": "lucide",
+                  "fill": "#FFFFFF"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "PaiMo",
+          "name": "Nav Divider",
+          "fill": "$border",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "G9Emj",
+          "name": "Session List",
+          "clip": true,
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            8,
+            0,
+            0,
+            0
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "iAqIj",
+              "name": "Session 1",
+              "width": "fill_container",
+              "fill": "#FFF5F4",
+              "layout": "vertical",
+              "gap": 6,
+              "padding": [
+                16,
+                20
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "DqDQ3",
+                  "name": "s1title",
+                  "fill": "$accent-red",
+                  "content": "探索期的两个核心任务",
+                  "fontFamily": "Space Grotesk",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "qd7Jj",
+                  "name": "s1preview",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "在职业探索期，最重要的两件事：找到自己的热情所在，以及积累可迁移的核心能力...",
+                  "fontFamily": "Inter",
+                  "fontSize": 13
+                },
+                {
+                  "type": "text",
+                  "id": "ZTTP5",
+                  "name": "s1date",
+                  "fill": "$text-muted",
+                  "content": "今天 14:32",
+                  "fontFamily": "Inter",
+                  "fontSize": 11
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "bw44a",
+              "name": "Divider 1",
+              "fill": "$border",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "tHQW3",
+              "name": "Session 2",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "padding": [
+                16,
+                20
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "MmNZj",
+                  "name": "s2title",
+                  "fill": "$text-primary",
+                  "content": "日报的内容优化",
+                  "fontFamily": "Space Grotesk",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "HkfkD",
+                  "name": "s2preview",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "如何让日报更有价值？从记录流水账到提炼洞察，三个实用技巧帮你提升日报质量...",
+                  "fontFamily": "Inter",
+                  "fontSize": 13
+                },
+                {
+                  "type": "text",
+                  "id": "ZVYku",
+                  "name": "s2date",
+                  "fill": "$text-muted",
+                  "content": "今天 10:15",
+                  "fontFamily": "Inter",
+                  "fontSize": 11
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "kSGAo",
+              "name": "Divider 2",
+              "fill": "$border",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "H4uv1",
+              "name": "Session 3",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "padding": [
+                16,
+                20
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "oOjYK",
+                  "name": "s3title",
+                  "fill": "$text-primary",
+                  "content": "Markdown 渲染测试",
+                  "fontFamily": "Space Grotesk",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "zWBU1",
+                  "name": "s3preview",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "测试各种 Markdown 语法的渲染效果，包括标题、列表、代码块、引用等常见格式...",
+                  "fontFamily": "Inter",
+                  "fontSize": 13
+                },
+                {
+                  "type": "text",
+                  "id": "oU8Qs",
+                  "name": "s3date",
+                  "fill": "$text-muted",
+                  "content": "昨天 18:45",
+                  "fontFamily": "Inter",
+                  "fontSize": 11
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "QRrX8",
+              "name": "Divider 3",
+              "fill": "$border",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "Vff78",
+              "name": "Session 4",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "padding": [
+                16,
+                20
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "mQm4Z",
+                  "name": "s4title",
+                  "fill": "$text-primary",
+                  "content": "LaTeX 公式笔记",
+                  "fontFamily": "Space Grotesk",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "xq72c",
+                  "name": "s4preview",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "常用 LaTeX 数学公式速查：矩阵运算、微积分符号、概率统计表达式的写法整理...",
+                  "fontFamily": "Inter",
+                  "fontSize": 13
+                },
+                {
+                  "type": "text",
+                  "id": "Hnbod",
+                  "name": "s4date",
+                  "fill": "$text-muted",
+                  "content": "昨天 09:20",
+                  "fontFamily": "Inter",
+                  "fontSize": 11
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "rmWo0",
+              "name": "Divider 4",
+              "fill": "$border",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "CDqFb",
+              "name": "Session 5",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "padding": [
+                16,
+                20
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "XGRng",
+                  "name": "s5title",
+                  "fill": "$text-primary",
+                  "content": "周报模板",
+                  "fontFamily": "Space Grotesk",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "8U9xS",
+                  "name": "s5preview",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "一份高效的周报模板：本周完成、下周计划、需要支持三个板块，附带填写指南...",
+                  "fontFamily": "Inter",
+                  "fontSize": 13
+                },
+                {
+                  "type": "text",
+                  "id": "1mCnT",
+                  "name": "s5date",
+                  "fill": "$text-muted",
+                  "content": "3月15日",
+                  "fontFamily": "Inter",
+                  "fontSize": 11
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "a7bR7",
+              "name": "Divider 5",
+              "fill": "$border",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "Bbzfy",
+              "name": "Session 6",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "padding": [
+                16,
+                20
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "6P2d5",
+                  "name": "s6title",
+                  "fill": "$text-primary",
+                  "content": "读书笔记分享",
+                  "fontFamily": "Space Grotesk",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "yfT6F",
+                  "name": "s6preview",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "《深度工作》读后感：在碎片化时代如何保持专注力，四个实践方法总结...",
+                  "fontFamily": "Inter",
+                  "fontSize": 13
+                },
+                {
+                  "type": "text",
+                  "id": "Hvnm3",
+                  "name": "s6date",
+                  "fill": "$text-muted",
+                  "content": "3月14日",
+                  "fontFamily": "Inter",
+                  "fontSize": 11
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "7CEGe",
+      "x": 490,
+      "y": -67,
+      "name": "Session Editor",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$bg-primary",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "ihSmf",
+          "name": "Status Bar",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            0,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "sb5W6",
+              "name": "timeLabel",
+              "fill": "$text-primary",
+              "content": "02:36",
+              "fontFamily": "$font-heading",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "WAkYU",
+              "name": "iconsRight",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "ib1QG",
+                  "name": "signal",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "IGA2H",
+                  "name": "wifi",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "mR27s",
+                  "name": "battery",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "TVYmw",
+          "name": "Nav Bar",
+          "width": "fill_container",
+          "height": 48,
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "qkx8D",
+              "name": "backBtn",
+              "width": 24,
+              "height": 24,
+              "iconFontName": "chevron-left",
+              "iconFontFamily": "lucide",
+              "fill": "$text-primary"
+            },
+            {
+              "type": "text",
+              "id": "UVc04",
+              "name": "navTitle",
+              "fill": "$text-primary",
+              "content": "写长文",
+              "fontFamily": "Space Grotesk",
+              "fontSize": 17,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "xblvF",
+              "name": "formatBtn",
+              "fill": "$accent-red",
+              "cornerRadius": 16,
+              "padding": [
+                6,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "DJDKC",
+                  "name": "formatLabel",
+                  "fill": "#FFFFFF",
+                  "content": "一键排版",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "to3yL",
+          "name": "Divider",
+          "fill": "$border",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "0f8Py",
+          "name": "Content Area",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "SuB7J",
+              "name": "titleInput",
+              "enabled": false,
+              "fill": "$text-placeholder",
+              "content": "输入标题",
+              "fontFamily": "Space Grotesk",
+              "fontSize": 22,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "HD0ss",
+              "name": "bodyPlaceholder",
+              "enabled": false,
+              "fill": "$text-placeholder",
+              "content": "粘贴到这里或输入文字，内容将自动保存",
+              "lineHeight": 1.6,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "XC5AI",
+              "name": "Sample Content",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "fRjO2",
+                  "name": "sampleTitle",
+                  "fill": "$text-primary",
+                  "content": "日报的内容",
+                  "fontFamily": "Space Grotesk",
+                  "fontSize": 22,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "Dkn0e",
+                  "name": "sampleBody",
+                  "fill": "$text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "明白了。现在日报缺的是叙事主线——读完不知道“今天这个人到底在干什么”。\n\n现在的结构是把数据并排摆出来（commits、Obsidian、条件状态），但没有把这些串成一个连贯的故事。读者需要自己拼图。",
+                  "lineHeight": 1.6,
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "PKLwN",
+                  "name": "moreContent",
+                  "fill": "$text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "我觉得改法很简单：在最顶部加一段今日一句话总结，像编辑写导语一样——不是列数据，而是用一句话描述今天这个人在做什么、处于什么状态。其他内容作为支撑细节保留，但有了这句话之后整篇就有了锚点。\n\n比如今天这份可以是：\n\n今天花时间把记录系统搭起来了，探索期的两个核心任务都在推进中。",
+                  "lineHeight": 1.6,
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "yWOb2",
+      "x": 980,
+      "y": -67,
+      "name": "Theme Preview",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$bg-primary",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "Vblq5",
+          "name": "Status Bar",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            0,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "DJYfF",
+              "name": "time2",
+              "fill": "$text-primary",
+              "content": "02:37",
+              "fontFamily": "Space Grotesk",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "c2QGB",
+              "name": "icons2",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "VmDMS",
+                  "name": "sig2",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "KJB8p",
+                  "name": "wif2",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "3iDe4",
+                  "name": "bat2",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "4jnF1",
+          "name": "Nav Bar",
+          "width": "fill_container",
+          "height": 48,
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "U7CNV",
+              "name": "back2",
+              "width": 24,
+              "height": 24,
+              "iconFontName": "chevron-left",
+              "iconFontFamily": "lucide",
+              "fill": "$text-primary"
+            },
+            {
+              "type": "text",
+              "id": "Z77Nf",
+              "name": "navTitle2",
+              "fill": "$text-primary",
+              "content": "预览",
+              "fontFamily": "Space Grotesk",
+              "fontSize": 17,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "vlk9D",
+              "name": "editLink",
+              "fill": "$accent-red",
+              "content": "编辑",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "500"
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "3tThy",
+          "name": "Divider",
+          "fill": "$border",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "hdjZl",
+          "name": "Preview Area",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            16,
+            20
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Y0yJb",
+              "name": "Card Preview",
+              "width": "fill_container",
+              "height": 380,
+              "fill": "#FFFFFF",
+              "cornerRadius": 8,
+              "stroke": {
+                "align": "outside",
+                "thickness": 1,
+                "fill": "$border"
+              },
+              "layout": "vertical",
+              "gap": 20,
+              "padding": [
+                32,
+                28
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "mWBGO",
+                  "name": "pageIndicator",
+                  "width": "fill_container",
+                  "justifyContent": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "YBm9E",
+                      "name": "pageBadge",
+                      "fill": "$accent-red",
+                      "cornerRadius": 12,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ijr0N",
+                          "name": "pageText",
+                          "fill": "#FFFFFF",
+                          "content": "1/2",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "nsECe",
+                  "name": "cardTitle",
+                  "fill": "$text-primary",
+                  "content": "日报的内容",
+                  "fontFamily": "Space Grotesk",
+                  "fontSize": 28,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "XhHTF",
+                  "name": "cardBody",
+                  "fill": "$text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "明白了。现在日报缺的是叙事主线——读完不知道“今天这个人到底在干什么”。\n\n现在的结构是把数据并排摆出来，但没有把这些串成一个连贯的故事。读者需要自己拼图。",
+                  "lineHeight": 1.7,
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "m5USl",
+              "name": "Page Dots",
+              "gap": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "0Tbie",
+                  "name": "dot1",
+                  "fill": "$accent-red",
+                  "width": 8,
+                  "height": 8
+                },
+                {
+                  "type": "ellipse",
+                  "id": "2vov2",
+                  "name": "dot2",
+                  "fill": "$border",
+                  "width": 8,
+                  "height": 8
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "9iBHX",
+              "name": "Theme Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "jw2DK",
+                  "name": "selectLabel",
+                  "fill": "$text-secondary",
+                  "content": "选择喜欢的排版",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "CIJQm",
+                  "name": "Theme Scroll",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "QKZVK",
+                      "name": "Theme 1",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "ZFUkX",
+                          "name": "thumb1",
+                          "width": 64,
+                          "height": 80,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 4,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "$accent-red"
+                          },
+                          "layout": "vertical",
+                          "gap": 4,
+                          "padding": [
+                            8,
+                            6
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "vTufD",
+                              "name": "t1title",
+                              "fill": "$text-primary",
+                              "content": "日报的内容",
+                              "fontFamily": "Space Grotesk",
+                              "fontSize": 5,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "text",
+                              "id": "FrC9h",
+                              "name": "t1body",
+                              "fill": "$text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "明白了。现在日报缺的是叙事主线...",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Inter",
+                              "fontSize": 3,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "rTgj0",
+                          "name": "t1label",
+                          "fill": "$text-secondary",
+                          "content": "简约基础",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "6jHhR",
+                      "name": "Theme 2",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "lUdpU",
+                          "name": "thumb2",
+                          "width": 64,
+                          "height": 80,
+                          "fill": "#F8F9FA",
+                          "cornerRadius": 4,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$border"
+                          },
+                          "layout": "vertical",
+                          "gap": 4,
+                          "padding": [
+                            8,
+                            6
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "3ZZWa",
+                              "name": "t2title",
+                              "fill": "$text-primary",
+                              "content": "日报的内容",
+                              "fontFamily": "Space Grotesk",
+                              "fontSize": 5,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "text",
+                              "id": "i6SDB",
+                              "name": "t2body",
+                              "fill": "$text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "明白了。现在日报缺的是叙事主线...",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Inter",
+                              "fontSize": 3,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "UdBv5",
+                          "name": "t2label",
+                          "fill": "$text-secondary",
+                          "content": "清晰明朗",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "fujjM",
+                      "name": "Theme 3",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Fcw6e",
+                          "name": "thumb3",
+                          "width": 64,
+                          "height": 80,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 4,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$border"
+                          },
+                          "layout": "vertical",
+                          "gap": 4,
+                          "padding": [
+                            8,
+                            6
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "kXDVm",
+                              "name": "t3title",
+                              "fill": "$text-primary",
+                              "content": "日报的内容",
+                              "fontFamily": "Space Grotesk",
+                              "fontSize": 5,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "text",
+                              "id": "BsNtz",
+                              "name": "t3body",
+                              "fill": "$text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "明白了。现在日报缺的是叙事主线...",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Inter",
+                              "fontSize": 3,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "sDmVG",
+                          "name": "t3label",
+                          "fill": "$text-secondary",
+                          "content": "黑白极简",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "I4G74",
+                      "name": "Theme 4",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "ZzwYy",
+                          "name": "thumb4",
+                          "width": 64,
+                          "height": 80,
+                          "fill": "#FFF5F5",
+                          "cornerRadius": 4,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$border"
+                          },
+                          "layout": "vertical",
+                          "gap": 4,
+                          "padding": [
+                            8,
+                            6
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "pp3Je",
+                              "name": "t4title",
+                              "fill": "$accent-red",
+                              "content": "日报的内容",
+                              "fontFamily": "Space Grotesk",
+                              "fontSize": 5,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "text",
+                              "id": "nTyWW",
+                              "name": "t4body",
+                              "fill": "$text-secondary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "明白了。现在日报缺的是叙事主线...",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Inter",
+                              "fontSize": 3,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "HZ27C",
+                          "name": "t4label",
+                          "fill": "$text-secondary",
+                          "content": "轻感明快",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "QNJep",
+                      "name": "Theme 5",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "pwPbL",
+                          "name": "thumb5",
+                          "width": 64,
+                          "height": 80,
+                          "fill": "#FDF6EC",
+                          "cornerRadius": 4,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$border"
+                          },
+                          "layout": "vertical",
+                          "gap": 4,
+                          "padding": [
+                            8,
+                            6
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "uXuyo",
+                              "name": "t5title",
+                              "fill": "#5C4033",
+                              "content": "日报的内容",
+                              "fontFamily": "Space Grotesk",
+                              "fontSize": 5,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "text",
+                              "id": "J2kQL",
+                              "name": "t5body",
+                              "fill": "#8B7355",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "明白了。现在日报缺的是叙事主线...",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Inter",
+                              "fontSize": 3,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "BRk28",
+                          "name": "t5label",
+                          "fill": "$text-secondary",
+                          "content": "黄昏手稿",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "87SWk",
+          "name": "Bottom Action Bar",
+          "width": "fill_container",
+          "height": 72,
+          "padding": [
+            12,
+            20,
+            20,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "NOgHy",
+              "name": "saveBtn",
+              "width": "fill_container",
+              "fill": "$accent-red",
+              "cornerRadius": 24,
+              "gap": 8,
+              "padding": [
+                14,
+                0
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "BWxAb",
+                  "name": "saveIcon",
+                  "width": 18,
+                  "height": 18,
+                  "iconFontName": "download",
+                  "iconFontFamily": "lucide",
+                  "fill": "#FFFFFF"
+                },
+                {
+                  "type": "text",
+                  "id": "Ft5uG",
+                  "name": "saveLabel",
+                  "fill": "#FFFFFF",
+                  "content": "保存图片",
+                  "fontFamily": "Space Grotesk",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Dhds5",
+      "x": 490,
+      "y": 905,
+      "name": "Bottom Bar",
+      "width": "fill_container(390)",
+      "height": 56,
+      "fill": "$bg-primary",
+      "padding": [
+        0,
+        20
+      ],
+      "justifyContent": "end",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "WJFaV",
+          "name": "Top Border",
+          "fill": "$border",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "6EbT4",
+          "name": "generateBtn",
+          "fill": "$accent-red",
+          "cornerRadius": 24,
+          "gap": 8,
+          "padding": [
+            12,
+            32
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "hCfob",
+              "name": "generateIcon",
+              "width": 16,
+              "height": 16,
+              "iconFontName": "sparkles",
+              "iconFontFamily": "lucide",
+              "fill": "#FFFFFF"
+            },
+            {
+              "type": "text",
+              "id": "VHayV",
+              "name": "generateLabel",
+              "fill": "#FFFFFF",
+              "content": "生成卡片",
+              "fontFamily": "Space Grotesk",
+              "fontSize": 14,
+              "fontWeight": "600"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "mUyH9",
+      "x": 0,
+      "y": 905,
+      "name": "Tab Bar Container",
+      "width": "fill_container(390)",
+      "padding": [
+        12,
+        21,
+        21,
+        21
+      ],
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "AuqIP",
+          "name": "Tab Bar Pill",
+          "width": "fill_container",
+          "height": 62,
+          "cornerRadius": 36,
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "$border"
+          },
+          "padding": 4,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "blD1C",
+              "name": "Sessions Tab",
+              "width": "fill_container",
+              "height": "fill_container",
+              "fill": "$accent-red",
+              "cornerRadius": 26,
+              "layout": "vertical",
+              "gap": 4,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "s2Pb5",
+                  "name": "tab1icon",
+                  "width": 18,
+                  "height": 18,
+                  "iconFontName": "message-square",
+                  "iconFontFamily": "lucide",
+                  "fill": "#FFFFFF"
+                },
+                {
+                  "type": "text",
+                  "id": "BGZe2",
+                  "name": "tab1label",
+                  "fill": "#FFFFFF",
+                  "content": "SESSIONS",
+                  "fontFamily": "Space Grotesk",
+                  "fontSize": 10,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.5
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "mbVlF",
+              "name": "Editor Tab",
+              "width": "fill_container",
+              "height": "fill_container",
+              "cornerRadius": 26,
+              "layout": "vertical",
+              "gap": 4,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "N9iSx",
+                  "name": "tab2icon",
+                  "width": 18,
+                  "height": 18,
+                  "iconFontName": "pen-line",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-secondary"
+                },
+                {
+                  "type": "text",
+                  "id": "Lcn5o",
+                  "name": "tab2label",
+                  "fill": "$text-secondary",
+                  "content": "EDITOR",
+                  "fontFamily": "Space Grotesk",
+                  "fontSize": 10,
+                  "fontWeight": "500",
+                  "letterSpacing": 0.5
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "sm8ff",
+              "name": "Preview Tab",
+              "width": "fill_container",
+              "height": "fill_container",
+              "cornerRadius": 26,
+              "layout": "vertical",
+              "gap": 4,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "ZKCLN",
+                  "name": "tab3icon",
+                  "width": 18,
+                  "height": 18,
+                  "iconFontName": "eye",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-secondary"
+                },
+                {
+                  "type": "text",
+                  "id": "IHEGG",
+                  "name": "tab3label",
+                  "fill": "$text-secondary",
+                  "content": "PREVIEW",
+                  "fontFamily": "Space Grotesk",
+                  "fontSize": 10,
+                  "fontWeight": "500",
+                  "letterSpacing": 0.5
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "n1xfW",
+              "name": "Settings Tab",
+              "width": "fill_container",
+              "height": "fill_container",
+              "cornerRadius": 26,
+              "layout": "vertical",
+              "gap": 4,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "385Kh",
+                  "name": "tab4icon",
+                  "width": 18,
+                  "height": 18,
+                  "iconFontName": "settings",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-secondary"
+                },
+                {
+                  "type": "text",
+                  "id": "oSUit",
+                  "name": "tab4label",
+                  "fill": "$text-secondary",
+                  "content": "SETTINGS",
+                  "fontFamily": "Space Grotesk",
+                  "fontSize": 10,
+                  "fontWeight": "500",
+                  "letterSpacing": 0.5
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "accent-green": {
+      "type": "color",
+      "value": "#22C55E"
+    },
+    "accent-red": {
+      "type": "color",
+      "value": "#E42313"
+    },
+    "bg-primary": {
+      "type": "color",
+      "value": "#FFFFFF"
+    },
+    "bg-surface": {
+      "type": "color",
+      "value": "#FAFAFA"
+    },
+    "border": {
+      "type": "color",
+      "value": "#E8E8E8"
+    },
+    "font-body": {
+      "type": "string",
+      "value": "Inter"
+    },
+    "font-heading": {
+      "type": "string",
+      "value": "Space Grotesk"
+    },
+    "text-muted": {
+      "type": "color",
+      "value": "#B0B0B0"
+    },
+    "text-placeholder": {
+      "type": "color",
+      "value": "#D0D0D0"
+    },
+    "text-primary": {
+      "type": "color",
+      "value": "#0D0D0D"
+    },
+    "text-secondary": {
+      "type": "color",
+      "value": "#7A7A7A"
+    }
+  }
+}
