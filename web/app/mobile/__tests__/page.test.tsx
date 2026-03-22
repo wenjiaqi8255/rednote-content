@@ -1,89 +1,52 @@
 /**
- * Tests for Mobile Home Page
+ * Mobile Route Redirect Tests
+ *
+ * The /mobile route now redirects to the unified home page.
+ * These tests verify the redirect behavior.
  */
 
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
-import MobileHomePage from '../page';
-import { StorageProvider } from '@/contexts/StorageContext';
+import React from 'react';
+import { render } from '@testing-library/react';
+import MobileRedirectPage from '../page';
 
 // Mock Next.js router
-const mockPush = jest.fn();
+const mockReplace = jest.fn();
 jest.mock('next/navigation', () => ({
   useRouter() {
     return {
-      push: mockPush,
+      replace: mockReplace,
     };
   },
 }));
 
-describe('Mobile Home Page', () => {
+describe('/mobile route redirect', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 
-  it('should render page title in nav bar', () => {
-    render(
-      <StorageProvider>
-        <MobileHomePage />
-      </StorageProvider>
-    );
-    expect(screen.getByText('Rednote Post')).toBeInTheDocument();
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
-  it('should render session list with sessions', () => {
-    render(<StorageProvider><MobileHomePage /></StorageProvider>);
-    // Since we're not mocking StorageContext, the session list will be empty
-    // Just verify the page structure renders correctly
-    const main = screen.getByRole('main');
-    expect(main).toBeInTheDocument();
+  it('should render loading spinner', () => {
+    const { container } = render(<MobileRedirectPage />);
+
+    const spinner = container.querySelector('.animate-spin');
+    expect(spinner).toBeInTheDocument();
   });
 
-  it('should render new session button', () => {
-    const { container } = render(<StorageProvider><MobileHomePage /></StorageProvider>);
-    const buttons = container.querySelectorAll('button');
-    expect(buttons.length).toBeGreaterThan(0);
+  it('should render loading text', () => {
+    const { container } = render(<MobileRedirectPage />);
+
+    const text = container.querySelector('.text-gray-600');
+    expect(text).toHaveTextContent('正在跳转...');
   });
 
-  it('should call createSession and navigate when new session button is clicked', async () => {
-    const { container } = render(<StorageProvider><MobileHomePage /></StorageProvider>);
+  it('should trigger redirect to unified home page', () => {
+    render(<MobileRedirectPage />);
 
-    // Find the red circular button (NewSessionButton)
-    const newSessionBtn = container.querySelector('button[style*="background-color"]');
-    if (newSessionBtn) {
-      await userEvent.click(newSessionBtn);
-      // Just verify the button exists and can be clicked
-      expect(newSessionBtn).toBeInTheDocument();
-    }
-  });
-
-  it('should have correct width (390px)', () => {
-    const { container } = render(<StorageProvider><MobileHomePage /></StorageProvider>);
-    const main = container.querySelector('main');
-    expect(main).toHaveStyle({ width: '390px' });
-  });
-
-  it('should have correct height (844px)', () => {
-    const { container } = render(<StorageProvider><MobileHomePage /></StorageProvider>);
-    const main = container.querySelector('main');
-    expect(main).toHaveStyle({ height: '844px' });
-  });
-
-  it('should render status bar', () => {
-    render(<StorageProvider><MobileHomePage /></StorageProvider>);
-    expect(screen.getByText('9:41')).toBeInTheDocument();
-  });
-
-  it('should use flex column layout', () => {
-    const { container } = render(<StorageProvider><MobileHomePage /></StorageProvider>);
-    const main = container.querySelector('main');
-    expect(main).toHaveStyle({ flexDirection: 'column' });
-  });
-
-  it('should have white background', () => {
-    const { container } = render(<StorageProvider><MobileHomePage /></StorageProvider>);
-    const main = container.querySelector('main');
-    expect(main).toHaveStyle({ backgroundColor: '#FFFFFF' });
+    // Redirect happens after useEffect
+    expect(mockReplace).toHaveBeenCalledWith('/');
   });
 });
