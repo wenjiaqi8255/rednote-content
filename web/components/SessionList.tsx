@@ -1,13 +1,16 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useStorageContext } from '@/contexts/StorageContext';
-import type { Session } from '@/types/session';
 
 interface SessionListProps {
   onCreateNew?: () => void;
+  /** If true, clicking a session navigates to /edit/[id]. If false, just selects the session. */
+  navigateOnSelect?: boolean;
 }
 
-export default function SessionList({ onCreateNew }: SessionListProps) {
+export default function SessionList({ onCreateNew, navigateOnSelect = false }: SessionListProps) {
+  const router = useRouter();
   const {
     sessions,
     currentSession,
@@ -17,7 +20,7 @@ export default function SessionList({ onCreateNew }: SessionListProps) {
   } = useStorageContext();
 
   const handleCreateNew = () => {
-    createSession({
+    const newSessionId = createSession({
       title: '新卡片',
       markdown: '',
       theme: 'default',
@@ -26,6 +29,20 @@ export default function SessionList({ onCreateNew }: SessionListProps) {
 
     if (onCreateNew) {
       onCreateNew();
+    }
+
+    // Navigate to edit page for the new session if navigation is enabled
+    if (navigateOnSelect && newSessionId) {
+      router.push(`/edit/${newSessionId}`);
+    }
+  };
+
+  const handleSelectSession = (sessionId: string) => {
+    selectSession(sessionId);
+
+    // Navigate to edit page if navigation is enabled
+    if (navigateOnSelect) {
+      router.push(`/edit/${sessionId}`);
     }
   };
 
@@ -107,7 +124,7 @@ export default function SessionList({ onCreateNew }: SessionListProps) {
               return (
                 <div key={session.id}>
                   <div
-                    onClick={() => selectSession(session.id)}
+                    onClick={() => handleSelectSession(session.id)}
                     className={`
                       group relative p-4 transition-all cursor-pointer card-hover
                       ${isCurrent

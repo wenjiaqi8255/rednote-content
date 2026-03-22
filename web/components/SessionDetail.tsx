@@ -11,7 +11,7 @@ export default function SessionDetail() {
   if (!currentSession) {
     return (
       <div className="h-full flex items-center justify-center bg-white rounded-lg border border-gray-200">
-        <div className="text-center">
+        <div className="text-center px-4 max-w-sm">
           <div className="text-6xl mb-4 opacity-30">⋄</div>
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
             请选择或创建一个会话
