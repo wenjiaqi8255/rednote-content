@@ -1,122 +1,32 @@
-'use client';
-
 /**
- * Mobile Session Editor Page
+ * Temporary redirect for old /mobile/edit/[id] route
  *
- * Markdown editor with auto-save functionality.
- * Pencil design specification:
- * - 390px width (mobile frame)
- * - Status bar (62px) + Nav bar (48px) + Content area (scrollable)
- * - Title: Space Grotesk, 22px, 600 weight
- * - Body: Inter, 15px, lineHeight 1.6
+ * This file provides backward compatibility during migration.
+ * Users accessing /mobile/edit/[id] will be redirected to /edit/[id].
+ *
+ * TODO: Remove this file after migration is complete (estimated: 1-2 weeks)
  */
+
+'use client';
 
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { StatusBar } from '@/components/mobile/StatusBar';
-import { MobileNavBar } from '@/components/mobile/MobileNavBar';
-import { MarkdownInput } from '@/components/mobile/MarkdownInput';
-import { StorageProvider, useStorageContext } from '@/contexts/StorageContext';
 
-/**
- * Format Button Component
- */
-interface FormatButtonProps {
-  sessionId: string;
-}
-
-function FormatButton({ sessionId }: FormatButtonProps) {
+export default function MobileEditRedirectPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
+  const { id } = React.use(params);
 
-  const handleClick = () => {
-    router.push(`/mobile/preview/${sessionId}`);
-  };
-
-  return (
-    <div
-      onClick={handleClick}
-      style={{
-        backgroundColor: '#E42313',
-        borderRadius: '16px',
-        padding: '6px 12px',
-        cursor: 'pointer',
-      }}
-    >
-      <span
-        style={{
-          color: '#FFFFFF',
-          fontFamily: 'Inter',
-          fontSize: '13px',
-          fontWeight: '500',
-        }}
-      >
-        一键排版
-      </span>
-    </div>
-  );
-}
-
-/**
- * Mobile Session Editor Page Component
- */
-function MobileEditorPageContent({ params }: { params: Promise<{ id: string }> }) {
-  const { id: sessionId } = React.use(params);
-  const { selectSession } = useStorageContext();
-
-  // Select this session as current when page loads
   useEffect(() => {
-    selectSession(sessionId);
-  }, [sessionId, selectSession]);
+    // Redirect to unified edit page
+    router.replace(`/edit/${id}`);
+  }, [router, id]);
 
   return (
-    <main
-      style={{
-        width: '390px',
-        height: '844px',
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: '#FFFFFF',
-        margin: '0 auto',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Status Bar */}
-      <StatusBar time="02:36" />
-
-      {/* Nav Bar */}
-      <MobileNavBar
-        title="写长文"
-        showBack={true}
-        rightAction={<FormatButton sessionId={sessionId} />}
-        height="inner"
-      />
-
-      {/* Divider */}
-      <div
-        style={{
-          height: '1px',
-          backgroundColor: '#E8E8E8',
-          width: '100%',
-        }}
-      />
-
-      {/* Content Area */}
-      <div
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-        }}
-      >
-        <MarkdownInput sessionId={sessionId} />
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4" />
+        <p className="text-gray-600">正在跳转...</p>
       </div>
-    </main>
-  );
-}
-
-export default function MobileEditorPage({ params }: { params: Promise<{ id: string }> }) {
-  return (
-    <StorageProvider>
-      <MobileEditorPageContent params={params} />
-    </StorageProvider>
+    </div>
   );
 }
