@@ -1,185 +1,166 @@
 # Rednote Post - Web Application
 
-## Project Overview
-
 A Next.js web application for rendering markdown content into XHS (小红书/Xiaohongshu) style cards with complete Markdown + LaTeX support.
 
-## Rules & Skills
-
-- Follow rules in `~/.claude/rules/common/`
-- TypeScript: follow `~/.claude/rules/typescript/`
-
-## Development Server
-
-**Port**: `3002` (to avoid conflicts with other Next.js projects)
+## Quick Start
 
 ```bash
-# Start development server on port 3002
+# Development (port 3002)
 npm run dev
 
-# Access at http://localhost:3002
-```
+# Testing
+npm test                 # All tests
+npm test -- --no-coverage  # Faster feedback
 
-**Port Configuration**: The dev server is configured to run on port 3002 to avoid conflicts with other local projects (e.g., VibeTrip on port 3000).
-
-## Tech Stack
-
-- **Framework**: Next.js 16.1.6 with React 19
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS 3.4.17 (stable version)
-- **Testing**: Jest with jsdom environment
-- **Markdown Rendering**: markdown-it with plugins
-- **Math Rendering**: KaTeX via markdown-it-katex
-- **Syntax Highlighting**: highlight.js
-
-## XHS Renderer Testing
-
-### Testing Patterns
-
-The XHS renderer (`lib/xhs-renderer.ts`) uses real markdown-it implementation in tests (not mocked) for accuracy.
-
-**Important test patterns:**
-- Use `match(/<h1/)` instead of `toContain('<h1>')` because markdown-it-anchor adds IDs to headers
-- Use regex like `/<span[^>]*katex/` for KaTeX elements which have complex HTML structure
-- Test the actual rendering output rather than mocking the markdown parser
-
-### Running Tests
-
-```bash
-# Run all tests
-npm test
-
-# Run specific test file
-npm test -- lib/__tests__/xhs-renderer.test.ts
-
-# Run without coverage for faster feedback
-npm test -- --no-coverage
-```
-
-## Dependencies
-
-### Core Markdown Dependencies
-
-- **markdown-it** (v14.1.1): Core Markdown parser with plugin system
-  - Better extension support than `marked`
-  - More powerful plugin architecture
-  - Better Chinese language support
-
-- **markdown-it-katex** (v2.0.3): LaTeX math formula rendering
-  - Supports inline math: `$E = mc^2$`
-  - Supports block math: `$$\int_0^1 x dx$$`
-
-- **markdown-it-anchor** (v9.2.0): Automatic header anchors
-  - Adds `id` attributes to headers
-  - Affects test assertions (headers have additional attributes)
-
-- **highlight.js** (v11.11.1): Syntax highlighting
-  - Supports 180+ languages
-  - Auto-detection for unknown languages
-
-### Jest Configuration for ES Modules
-
-When adding new ES module dependencies, update `jest.config.js`:
-
-```javascript
-transformIgnorePatterns: [
-  '/node_modules/(?!(marked|markdown-it|markdown-it-katex|markdown-it-anchor|highlight.js)/)',
-  '^.+\\.module\\.(css|sass|scss)$',
-],
-```
-
-This allows Jest to transform these dependencies properly.
-
-## TypeScript Declarations
-
-Custom TypeScript declarations are stored in `web/types/` for packages without `@types/`:
-
-- `types/markdown-it-katex.d.ts` - Declares the PluginSimple type for markdown-it-katex
-
-## Build Verification
-
-Always run the build before committing to ensure TypeScript compiles:
-
-```bash
+# Build verification
 npm run build
 ```
 
-The build should complete successfully with no TypeScript errors.
+**Port**: 3002 (avoids conflict with VibeTrip on 3000)
 
-## File Structure
+## Architecture
+
+### Dual Interface Design
+
+```
+Desktop (> 768px)          Mobile (≤ 768px)
+    │                            │
+    ▼                            ▼
+  / (full editor)          /mobile (simplified)
+    │                            │
+    ├─ Session management         ├─ Mobile editor
+    ├─ Real-time preview          ├─ Theme preview
+    └─ Advanced controls          └─ Touch-optimized UI
+```
+
+**Auto-redirect**: `app/page.tsx` detects mobile and redirects to `/mobile`
+
+### Core Directory Structure
 
 ```
 web/
+├── app/
+│   ├── mobile/              # Mobile routes
+│   │   ├── edit/[id]/       # Session editor (auto-save)
+│   │   └── preview/[id]/    # Theme preview
+│   ├── page.tsx             # Desktop home + mobile redirect
+│   └── globals.css          # Tailwind v3 + Pencil variables
+├── hooks/
+│   └── useLocalStorage.ts   # Session management + auto-save
+├── contexts/
+│   └── StorageContext.tsx   # Global session state
 ├── lib/
-│   ├── xhs-renderer.ts          # Main XHS renderer implementation
-│   └── __tests__/
-│       └── xhs-renderer.test.ts  # Comprehensive test suite (15 tests)
-├── public/
-│   └── assets/
-│       └── card.html             # HTML template with KaTeX CSS
-├── types/
-│   └── markdown-it-katex.d.ts   # TypeScript declarations
-├── jest.config.js                # Jest configuration
-└── package.json                  # Dependencies
+│   ├── xhs-renderer.ts      # XHS card renderer
+│   ├── storage.ts           # LocalStorage utilities
+│   └── hooks/               # useMobileDetection
+└── components/
+    └── mobile/              # Mobile-specific UI
 ```
 
-## Features Implemented
+## Critical Patterns
 
-✅ **Table Support**: Full rendering with thead/tbody
-✅ **LaTeX Math**: Inline and block formulas with KaTeX
-✅ **Syntax Highlighting**: Code blocks with language-specific highlighting
-✅ **Nested Structures**: Lists inside blockquotes, multi-level lists
-✅ **Tag Extraction**: Preserved from Python version
-✅ **8 Themes**: default, neo-brutalism, terminal, botanical, playful-geometric, retro, professional, sketch
+### React: Preventing Infinite Loops
 
-## Test Coverage
+**Problem**: Unstable function references cause infinite re-renders
 
-All 15 tests passing:
-- Tables rendering
-- Inline LaTeX math
-- Block LaTeX math
-- Code syntax highlighting
-- Nested lists and blockquotes
-- Complex multi-feature documents
-- Tag extraction and theming
-- All 8 theme variations
+**Solution** (from `useLocalStorage.ts`):
+```typescript
+// ❌ WRONG - recreated every render
+const updateCurrent = (data) => {
+  setSessions([...sessions, updated]); // Stale closure!
+};
 
-## Commit Conventions
+// ✅ CORRECT - stable reference
+const updateCurrent = useCallback((data) => {
+  setSessions((prev) => {  // Functional update
+    const updated = [...prev, newSession];
+    saveToStorage(updated);
+    return updated;
+  });
+}, []); // No deps = stable forever
+```
 
-Use conventional commit format:
-- `Feat:` - New features
-- `Fix:` - Bug fixes
-- `Docs:` - Documentation changes
-- `Test:` - Test updates
-- `Refactor:` - Code refactoring
+**Key patterns**:
+- Wrap ALL hook functions in `useCallback`
+- Use functional updates `setState(prev => ...)`
+- Use `useRef` for initialization tracking (no re-render)
 
-Include detailed descriptions with bullet points for significant changes.
+### Testing: HTML Assertions
 
-## Development Workflow
+**Problem**: markdown-it plugins add dynamic attributes to HTML
 
-1. Write failing tests first (TDD approach)
-2. Implement feature to make tests pass
-3. Run `npm test` to verify all tests pass
-4. Run `npm run build` to verify build succeeds
-5. Commit with conventional commit format
-6. Push to remote repository
+**Solution**:
+```typescript
+// ❌ WRONG - fails with extra attributes
+expect(html).toContain('<h1>');
 
-## Port Configuration
+// ✅ CORRECT - flexible matching
+expect(html).toMatch(/<h1/);
+expect(html).toMatch(/<span[^>]*katex/);
+```
 
-**Why Port 3002?**
-- Avoids conflict with VibeTrip project (port 3000)
-- Keeps port numbers in the 3000-3100 range for Next.js projects
-- Easy to remember: add 2 to default port 3000
+### Mobile: Auto-Save Behavior
 
-**Configuration:**
-- Dev server: `next dev --port 3002` (in package.json scripts)
-- Production server: `next start --port 3002` (in package.json scripts)
+**Implementation** (`MarkdownInput.tsx` + `useLocalStorage.ts`):
+1. User types → 500ms debounce
+2. `useLocalStorage` updates `currentSession` in localStorage
+3. Page load → useEffect syncs from `currentSession` (once only)
+4. `hasSyncedRef` prevents overwriting user input during editing
 
-**Checking Port Availability:**
+**Critical**: Never sync from `currentSession` while user is actively editing
+
+### Jest: ES Module Dependencies
+
+When adding ES modules (markdown-it, etc.), update `jest.config.js`:
+
+```javascript
+transformIgnorePatterns: [
+  '/node_modules/(?!(markdown-it|markdown-it-katex|...))/'
+]
+```
+
+## Reference
+
+### Tech Stack
+
+- **Framework**: Next.js 16.1.6 + React 19 + TypeScript
+- **Styling**: Tailwind CSS 3.4.17 (Pencil design system)
+- **Testing**: Jest (unit) + Playwright (E2E mobile)
+- **Markdown**: markdown-it + KaTeX + highlight.js
+
+### Why markdown-it over marked?
+
+- ✅ Better plugin architecture
+- ✅ Official KaTeX support
+- ✅ Better Chinese language support
+- ⚠️ Requires special test assertions (adds IDs/attributes)
+
+### Commit Conventions
+
+```
+Feat: New features
+Fix: Bug fixes
+Docs: Documentation
+Test: Test updates
+Refactor: Code refactoring
+```
+
+Include detailed bullet points for significant changes.
+
+### Development Workflow
+
+1. Write failing tests first (TDD)
+2. Implement to pass tests
+3. Run `npm test` + `npm run build`
+4. Commit with conventional format
+5. Push to remote
+
+### Environment Notes
+
+**Node.js**: Uses npm (not yarn/pnpm)
+
+**Port management**:
 ```bash
-# Check if port 3002 is in use
-lsof -ti:3002
-
-# Kill any process using port 3002
-kill -9 $(lsof -ti:3002)
+lsof -ti:3002              # Check port 3002
+kill -9 $(lsof -ti:3002)   # Free port 3002
 ```
