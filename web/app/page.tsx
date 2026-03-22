@@ -1,28 +1,31 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import SessionList from '@/components/SessionList';
-import SessionDetail from '@/components/SessionDetail';
 import MobileHeader from '@/components/MobileHeader';
+import { ResponsiveSidebar } from '@/components/ResponsiveSidebar';
 import { StorageProvider, useStorageContext } from '@/contexts/StorageContext';
-import { useMobileDetection } from '@/lib/hooks/useMobileDetection';
 
+/**
+ * Home Page - Pure Session List
+ *
+ * Unified experience for mobile and desktop:
+ * - Shows session list in sidebar (collapsible on mobile, always visible on desktop)
+ * - Main area shows welcome message / instructions
+ * - Clicking a session navigates to /edit/[id]
+ *
+ * Flow: / (list) → /edit/[id] (edit) → /preview/[id] (preview)
+ */
 function HomeContent() {
-  const router = useRouter();
-  const isMobile = useMobileDetection();
   const { currentSession } = useStorageContext();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Redirect mobile devices to /mobile route
-  useEffect(() => {
-    if (isMobile) {
-      router.push('/mobile');
-    }
-  }, [isMobile, router]);
-
   const handleToggleMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const handleCloseMenu = () => {
+    setIsMobileMenuOpen(false);
   };
 
   return (
@@ -35,36 +38,46 @@ function HomeContent() {
       />
 
       <div className="flex">
-        {/* Sidebar (SessionList) */}
-        <div
-          data-testid="sidebar-container"
-          className={`
-            fixed inset-y-0 left-0 z-40 w-80 bg-white border-r border-gray-200
-            transform transition-transform duration-300 ease-in-out
-            md:relative md:translate-x-0
-            ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
-            pt-16 md:pt-0
-          `}
-        >
-          <SessionList onCreateNew={() => setIsMobileMenuOpen(false)} />
-        </div>
-
-        {/* Backdrop for mobile */}
-        {isMobileMenuOpen && (
-          <div
-            data-testid="sidebar-backdrop"
-            className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
-            onClick={handleToggleMenu}
+        {/* Responsive Sidebar */}
+        <ResponsiveSidebar isOpen={isMobileMenuOpen} onClose={handleCloseMenu}>
+          <SessionList
+            onCreateNew={handleCloseMenu}
+            navigateOnSelect={true}
           />
-        )}
+        </ResponsiveSidebar>
 
-        {/* Main Content (SessionDetail) */}
-        <div
+        {/* Main Content Area - Welcome/Instructions */}
+        <main
           data-testid="main-content"
-          className="flex-1 min-w-0"
+          className="flex-1 min-w-0 p-4 md:p-6"
         >
-          <SessionDetail />
-        </div>
+          <div className="max-w-md mx-auto md:max-w-4xl">
+            {/* Welcome message when no session is selected */}
+            <div className="text-center py-20">
+              <div className="text-6xl mb-5 opacity-30">✨</div>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-3">
+                欢迎使用小红书卡片生成器
+              </h2>
+              <p className="text-gray-500 mb-8">
+                从左侧选择一个会话开始编辑，或创建新卡片
+              </p>
+              <div className="space-y-3 text-sm text-gray-600">
+                <div className="flex items-center justify-center gap-2">
+                  <span className="w-6 h-6 bg-red-100 text-red-600 rounded-full flex items-center justify-center font-medium">1</span>
+                  <span>在左侧创建或选择卡片</span>
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                  <span className="w-6 h-6 bg-red-100 text-red-600 rounded-full flex items-center justify-center font-medium">2</span>
+                  <span>编辑标题和正文内容</span>
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                  <span className="w-6 h-6 bg-red-100 text-red-600 rounded-full flex items-center justify-center font-medium">3</span>
+                  <span>点击"一键排版"预览和生成图片</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
     </div>
   );
