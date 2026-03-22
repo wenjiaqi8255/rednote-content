@@ -4,11 +4,21 @@ import SessionList from '../SessionList';
 import { StorageProvider } from '@/contexts/StorageContext';
 import type { Session } from '@/types/session';
 
+// Mock Next.js router
+const mockPush = jest.fn();
+jest.mock('next/navigation', () => ({
+  useRouter() {
+    return {
+      push: mockPush,
+    };
+  },
+}));
+
 // Mock the useStorageContext
 const mockUseStorageContext = {
   sessions: [],
   currentSession: null,
-  createSession: jest.fn(),
+  createSession: jest.fn(() => 'new-session-id'),
   deleteSession: jest.fn(),
   selectSession: jest.fn(),
   updateCurrentSession: jest.fn(),
