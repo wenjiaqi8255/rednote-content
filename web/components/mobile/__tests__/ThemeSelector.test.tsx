@@ -181,6 +181,6 @@ describe('ThemeSelector', () => {
     );
 
     const defaultButton = screen.getByText('默认');
-    expect(defaultButton).toHaveStyle({ padding: '8px 16px' });
+    expect(defaultButton).toHaveStyle({ padding: '10px 16px' });
   });
 });
