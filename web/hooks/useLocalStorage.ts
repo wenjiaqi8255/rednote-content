@@ -11,12 +11,14 @@ import type { Session } from '@/types/session';
 export function useLocalStorage() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Load data on mount
   useEffect(() => {
     const data = loadFromStorage();
     setSessions(data.sessions);
     setCurrentSessionId(data.currentSessionId);
+    setIsLoading(false);
   }, []);
 
   // Get the current session object
@@ -87,6 +89,7 @@ export function useLocalStorage() {
   return {
     sessions,
     currentSession,
+    isLoading,
     createSession: createNewSession,
     deleteSession: removeSession,
     selectSession: selectCurrentSession,

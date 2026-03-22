@@ -4,7 +4,7 @@ import { useState } from 'react';
 import SessionList from '@/components/SessionList';
 import MobileHeader from '@/components/MobileHeader';
 import { ResponsiveSidebar } from '@/components/ResponsiveSidebar';
-import { StorageProvider, useStorageContext } from '@/contexts/StorageContext';
+import { useStorageContext } from '@/contexts/StorageContext';
 
 /**
  * Home Page - Pure Session List
@@ -36,6 +36,13 @@ function HomeContent() {
         onToggleMenu={handleToggleMenu}
         currentTitle={currentSession?.title}
       />
+
+      {/* Desktop Header */}
+      <header className="hidden md:flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200">
+        <h1 className="text-2xl font-semibold text-gray-900">
+          小红书卡片生成器
+        </h1>
+      </header>
 
       <div className="flex">
         {/* Responsive Sidebar */}
@@ -84,9 +91,5 @@ function HomeContent() {
 }
 
 export default function Home() {
-  return (
-    <StorageProvider>
-      <HomeContent />
-    </StorageProvider>
-  );
+  return <HomeContent />;
 }

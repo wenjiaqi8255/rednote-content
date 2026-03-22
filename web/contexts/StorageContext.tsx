@@ -7,6 +7,7 @@ import type { Session } from '@/types/session';
 interface StorageContextType {
   sessions: Session[];
   currentSession: Session | null;
+  isLoading: boolean;
   createSession: (data: Omit<Session, 'id' | 'createdAt' | 'updatedAt'>) => string;
   deleteSession: (sessionId: string) => void;
   selectSession: (sessionId: string) => void;

@@ -18,6 +18,7 @@ jest.mock('next/navigation', () => ({
 const mockUseStorageContext = {
   sessions: [],
   currentSession: null,
+  isLoading: false,
   createSession: jest.fn(() => 'new-session-id'),
   deleteSession: jest.fn(),
   selectSession: jest.fn(),
@@ -197,5 +198,21 @@ describe('SessionList Component - TDD', () => {
     const currentSessionElement = container.querySelector('.bg-gray-50');
     expect(currentSessionElement).toBeInTheDocument();
     expect(currentSessionElement).toHaveTextContent('Session 2');
+  });
+
+  // Test loading state
+  test('shows loading state when isLoading is true', () => {
+    mockUseStorageContext.isLoading = true;
+    mockUseStorageContext.sessions = [];
+
+    render(<SessionList />);
+
+    // Should show loading spinner, not empty state
+    expect(screen.queryByText(/开始创作/i)).not.toBeInTheDocument();
+    // Should show loading indicator
+    expect(screen.getByText(/加载中/i)).toBeInTheDocument();
+
+    // Reset for other tests
+    mockUseStorageContext.isLoading = false;
   });
 });

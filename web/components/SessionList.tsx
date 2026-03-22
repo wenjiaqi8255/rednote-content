@@ -14,10 +14,61 @@ export default function SessionList({ onCreateNew, navigateOnSelect = false }: S
   const {
     sessions,
     currentSession,
+    isLoading,
     createSession,
     deleteSession,
     selectSession,
   } = useStorageContext();
+
+  // Show loading state while data is being loaded
+  if (isLoading) {
+    return (
+      <div className="h-full flex flex-col bg-white">
+        {/* Header - Notion-style with bottom line */}
+        <div className="px-6 pt-6 pb-4 border-b border-gray-200">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-1">
+            我的作品
+          </h2>
+          <p className="text-sm text-gray-500 mb-5">
+            加载中...
+          </p>
+
+          <button
+            disabled
+            className="btn btn-primary w-full shadow-sm opacity-50 cursor-not-allowed"
+            style={{ minHeight: '48px' }}
+          >
+            <svg
+              className="w-5 h-5 animate-spin"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+            创建新卡片
+          </button>
+        </div>
+
+        {/* Loading indicator */}
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600" />
+        </div>
+      </div>
+    );
+  }
 
   const handleCreateNew = () => {
     const newSessionId = createSession({

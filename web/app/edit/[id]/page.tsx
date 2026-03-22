@@ -13,7 +13,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Menu } from 'lucide-react';
-import { StorageProvider, useStorageContext } from '@/contexts/StorageContext';
+import { useStorageContext } from '@/contexts/StorageContext';
 import { ResponsiveSidebar } from '@/components/ResponsiveSidebar';
 import SessionList from '@/components/SessionList';
 import { MarkdownInput } from '@/components/mobile/MarkdownInput';
@@ -122,9 +122,5 @@ function UnifiedEditPageContent({ params }: { params: Promise<{ id: string }> })
 }
 
 export default function UnifiedEditPage({ params }: { params: Promise<{ id: string }> }) {
-  return (
-    <StorageProvider>
-      <UnifiedEditPageContent params={params} />
-    </StorageProvider>
-  );
+  return <UnifiedEditPageContent params={params} />;
 }

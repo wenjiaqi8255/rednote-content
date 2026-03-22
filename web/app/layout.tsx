@@ -1,5 +1,7 @@
-import type { Metadata } from "next";
+'use client';
+
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { StorageProvider } from '@/contexts/StorageContext';
 import "./globals.css";
 
 // Clean sans-serif for all text (Notion-style)
@@ -18,11 +20,6 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Rednote Post - 小红书卡片生成器",
-  description: "将 Markdown 内容转换为精美的小红书风格卡片",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -30,10 +27,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
+      <head>
+        <title>Rednote Post - 小红书卡片生成器</title>
+        <meta name="description" content="将 Markdown 内容转换为精美的小红书风格卡片" />
+      </head>
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
       >
-        {children}
+        <StorageProvider>
+          {children}
+        </StorageProvider>
       </body>
     </html>
   );

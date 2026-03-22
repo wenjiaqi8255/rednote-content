@@ -12,7 +12,7 @@
 
 import React, { useState } from 'react';
 import { Menu } from 'lucide-react';
-import { StorageProvider, useStorageContext } from '@/contexts/StorageContext';
+import { useStorageContext } from '@/contexts/StorageContext';
 import { ResponsiveSidebar } from '@/components/ResponsiveSidebar';
 import SessionList from '@/components/SessionList';
 import { ThemeSelector } from '@/components/mobile/ThemeSelector';
@@ -80,7 +80,17 @@ function DesktopHeader({ sessionId }: { sessionId: string }) {
  * Card Preview Component
  */
 function CardPreview({ sessionId, theme }: { sessionId: string; theme: Theme }) {
-  const { sessions } = useStorageContext();
+  const { sessions, isLoading } = useStorageContext();
+
+  // Show loading state while data is being loaded
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600" />
+      </div>
+    );
+  }
+
   const session = sessions.find((s) => s.id === sessionId);
 
   if (!session) {
@@ -206,9 +216,5 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
 }
 
 export default function UnifiedPreviewPage({ params }: { params: Promise<{ id: string }> }) {
-  return (
-    <StorageProvider>
-      <UnifiedPreviewPageContent params={params} />
-    </StorageProvider>
-  );
+  return <UnifiedPreviewPageContent params={params} />;
 }

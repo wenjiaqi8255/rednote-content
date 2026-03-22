@@ -80,6 +80,7 @@ jest.mock('@/contexts/StorageContext', () => ({
   useStorageContext: () => ({
     sessions: [],
     currentSession: null,
+    isLoading: false,
     createSession: jest.fn(),
     deleteSession: jest.fn(),
     selectSession: jest.fn(),
