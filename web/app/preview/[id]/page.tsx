@@ -84,12 +84,16 @@ function CardPreview({ sessionId, theme }: { sessionId: string; theme: Theme }) 
   const { sessions, isLoading } = useStorageContext();
   const router = useRouter();
   const hasValidatedRef = useRef(false);
+  const [htmlContent, setHtmlContent] = useState('');
 
   console.log('[CardPreview] Rendering:', {
     sessionId,
     isLoading,
     sessionsCount: sessions.length,
   });
+
+  const session = sessions.find((s) => s.id === sessionId);
+  console.log('[CardPreview] Found session:', session?.id || 'NOT FOUND');
 
   // Validate session exists and redirect if not
   useEffect(() => {
@@ -105,6 +109,19 @@ function CardPreview({ sessionId, theme }: { sessionId: string; theme: Theme }) 
     }
   }, [sessionId, isLoading, sessions, router]);
 
+  // Generate HTML when session or theme changes — MUST be async via useEffect
+  useEffect(() => {
+    if (!session) return;
+
+    const generateHtml = async () => {
+      console.log('[CardPreview] Generating HTML for theme:', theme);
+      const html = await generateXHSCard(session.markdown, theme);
+      setHtmlContent(html);
+    };
+
+    generateHtml();
+  }, [session?.markdown, session?.id, theme]);
+
   // Show loading state while data is being loaded
   if (isLoading) {
     console.log('[CardPreview] Showing loading state');
@@ -114,9 +131,6 @@ function CardPreview({ sessionId, theme }: { sessionId: string; theme: Theme }) 
       </div>
     );
   }
-
-  const session = sessions.find((s) => s.id === sessionId);
-  console.log('[CardPreview] Found session:', session?.id || 'NOT FOUND');
 
   if (!session) {
     // This will be shown briefly before redirect
@@ -128,7 +142,17 @@ function CardPreview({ sessionId, theme }: { sessionId: string; theme: Theme }) 
     );
   }
 
-  const cardHTML = generateXHSCard(session.markdown, theme);
+  // Show loading state while generating HTML
+  if (!htmlContent) {
+    console.log('[CardPreview] Generating HTML...');
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600" />
+      </div>
+    );
+  }
+
+  console.log('[CardPreview] HTML generated, rendering content');
 
   return (
     <div
@@ -141,7 +165,7 @@ function CardPreview({ sessionId, theme }: { sessionId: string; theme: Theme }) 
 
       {/* Card content - sanitized by markdown-it */}
       <div
-        dangerouslySetInnerHTML={{ __html: cardHTML }}
+        dangerouslySetInnerHTML={{ __html: htmlContent }}
         className="flex-1 overflow-hidden"
       />
     </div>
