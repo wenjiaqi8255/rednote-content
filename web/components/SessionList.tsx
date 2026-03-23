@@ -89,11 +89,17 @@ export default function SessionList({ onCreateNew, navigateOnSelect = false }: S
   };
 
   const handleSelectSession = (sessionId: string) => {
-    selectSession(sessionId);
+    // Don't call selectSession here - let the target page handle it on mount
+    // This prevents the current session from being overwritten while editing
 
     // Navigate to edit page if navigation is enabled
     if (navigateOnSelect) {
       router.push(`/edit/${sessionId}`);
+    }
+    // If navigateOnSelect is false (e.g., home page), still update current session
+    // so the indicator shows correctly
+    else {
+      selectSession(sessionId);
     }
   };
 
