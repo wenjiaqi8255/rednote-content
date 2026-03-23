@@ -72,10 +72,23 @@ export function MarkdownInput({
   initialTitle = '',
   initialBody = '',
 }: MarkdownInputProps) {
-  const { currentSession, updateCurrentSession } = useStorageContext();
+  const { currentSession, updateCurrentSession, isLoading } = useStorageContext();
   const isCurrentSession = currentSession?.id === sessionId;
 
+  console.log('[MarkdownInput] Rendering:', {
+    sessionId,
+    isCurrentSession,
+    isLoading,
+    currentSessionId: currentSession?.id || 'null',
+  });
+
+  // Wait for loading before initializing state
   const [title, setTitle] = useState(() => {
+    if (isLoading) {
+      console.log('[MarkdownInput] Loading, returning empty title');
+      return ''; // Will be set by sync effect
+    }
+    console.log('[MarkdownInput] Initializing title, isCurrentSession:', isCurrentSession);
     if (isCurrentSession && currentSession) {
       return currentSession.title;
     }
@@ -83,6 +96,9 @@ export function MarkdownInput({
   });
 
   const [body, setBody] = useState(() => {
+    if (isLoading) {
+      return ''; // Will be set by sync effect
+    }
     if (isCurrentSession && currentSession) {
       return currentSession.markdown;
     }
@@ -104,10 +120,15 @@ export function MarkdownInput({
         markdown: debouncedBody,
       });
     }
-  }, [debouncedTitle, debouncedBody, isCurrentSession]);
+  }, [debouncedTitle, debouncedBody, isCurrentSession, updateCurrentSession]);
 
   // Sync with currentSession when it becomes available (but only once per session)
   useEffect(() => {
+    console.log('[MarkdownInput] Sync effect:', {
+      isCurrentSession,
+      hasSyncedRef: hasSyncedRef.current,
+      currentSessionTitle: currentSession?.title || 'null',
+    });
     if (isCurrentSession && currentSession && !hasSyncedRef.current) {
       setTitle(currentSession.title);
       setBody(currentSession.markdown);
