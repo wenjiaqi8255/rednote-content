@@ -15,14 +15,21 @@ export function useLocalStorage() {
 
   // Load data on mount
   useEffect(() => {
+    console.log('[useLocalStorage] Mounting, loading from storage...');
     const data = loadFromStorage();
+    console.log('[useLocalStorage] Loaded data:', {
+      sessionsCount: data.sessions.length,
+      currentSessionId: data.currentSessionId,
+    });
     setSessions(data.sessions);
     setCurrentSessionId(data.currentSessionId);
     setIsLoading(false);
+    console.log('[useLocalStorage] isLoading set to false');
   }, []);
 
   // Get the current session object
   const currentSession = sessions.find((s) => s.id === currentSessionId) || null;
+  console.log('[useLocalStorage] currentSession:', currentSession?.id || 'null');
 
   // Create a new session
   const createNewSession = useCallback((data: Omit<Session, 'id' | 'createdAt' | 'updatedAt'>) => {
@@ -51,12 +58,17 @@ export function useLocalStorage() {
     setCurrentSessionId(data.currentSessionId);
   }, []);
 
-  // Select a session as current
+  // Select a session as current (with validation)
   const selectCurrentSession = useCallback((sessionId: string) => {
-    setCurrentSessionId(sessionId);
-
-    // Use functional update to get latest sessions
+    // Validate session exists before selecting
     setSessions((prevSessions) => {
+      const sessionExists = prevSessions.some(s => s.id === sessionId);
+      if (!sessionExists) {
+        console.warn('[useLocalStorage] Attempted to select non-existent session:', sessionId);
+        return prevSessions; // Don't change anything
+      }
+      console.log('[useLocalStorage] Selecting session:', sessionId);
+      setCurrentSessionId(sessionId);
       saveToStorage(prevSessions, sessionId);
       return prevSessions;
     });
