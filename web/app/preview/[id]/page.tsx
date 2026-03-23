@@ -215,6 +215,24 @@ function SaveButtonWrapper({ sessionId, cardRef }: { sessionId: string; cardRef:
       logging: false,
       backgroundColor: '#ffffff',
       scale: 2, // 2x for retina quality
+      onclone: (clonedDoc) => {
+        // Remove CSS rules with lab() / lch() color functions
+        // html2canvas doesn't support these modern CSS color syntaxes
+        const styleSheets = Array.from(clonedDoc.styleSheets);
+        for (const sheet of styleSheets) {
+          try {
+            const rules = Array.from(sheet.cssRules);
+            for (let i = rules.length - 1; i >= 0; i--) {
+              const ruleText = rules[i].cssText;
+              if (ruleText && (ruleText.includes('lab(') || ruleText.includes('lch('))) {
+                sheet.deleteRule(i);
+              }
+            }
+          } catch {
+            // Cross-origin stylesheets may throw — skip
+          }
+        }
+      },
     });
 
     return canvas.toDataURL('image/png');
