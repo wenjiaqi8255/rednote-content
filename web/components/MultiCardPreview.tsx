@@ -54,7 +54,7 @@ export default function MultiCardPreview({ markdown, theme, sessionId }: MultiCa
       const canvas = await html2canvas(cardElement, {
         useCORS: true,
         logging: false,
-        background: '#ffffff',
+        backgroundColor: '#ffffff',
         width: rect.width * 2,
         height: rect.height * 2,
       });

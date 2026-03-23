@@ -11,6 +11,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import html2canvas from 'html2canvas';
 import { Menu } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useStorageContext } from '@/contexts/StorageContext';
@@ -80,7 +81,7 @@ function DesktopHeader({ sessionId }: { sessionId: string }) {
 /**
  * Card Preview Component
  */
-function CardPreview({ sessionId, theme }: { sessionId: string; theme: Theme }) {
+function CardPreview({ sessionId, theme, cardRef }: { sessionId: string; theme: Theme; cardRef: React.RefObject<HTMLDivElement | null> }) {
   const { sessions, isLoading } = useStorageContext();
   const router = useRouter();
   const hasValidatedRef = useRef(false);
@@ -167,6 +168,7 @@ function CardPreview({ sessionId, theme }: { sessionId: string; theme: Theme }) 
 
   return (
     <div
+      ref={cardRef}
       className="mx-auto overflow-hidden rounded-lg border border-gray-200"
       style={{
         width: `${previewWidth}px`,
@@ -199,18 +201,30 @@ function CardPreview({ sessionId, theme }: { sessionId: string; theme: Theme }) 
 /**
  * Save Button Wrapper - extracts session title for SaveButton
  */
-function SaveButtonWrapper({ sessionId }: { sessionId: string }) {
+function SaveButtonWrapper({ sessionId, cardRef }: { sessionId: string; cardRef: React.RefObject<HTMLDivElement | null> }) {
   const { sessions } = useStorageContext();
   const session = sessions.find((s) => s.id === sessionId);
+
+  const handleGenerateImage = async (): Promise<string> => {
+    if (!cardRef.current) {
+      throw new Error('Card element not found');
+    }
+
+    const canvas = await html2canvas(cardRef.current, {
+      useCORS: true,
+      logging: false,
+      backgroundColor: '#ffffff',
+      scale: 2, // 2x for retina quality
+    });
+
+    return canvas.toDataURL('image/png');
+  };
 
   return (
     <SaveButton
       sessionId={sessionId}
       title={session?.title || '卡片'}
-      onGenerateImage={async () => {
-        // Placeholder implementation - return mock data
-        return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
-      }}
+      onGenerateImage={handleGenerateImage}
     />
   );
 }
@@ -240,6 +254,7 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
   const { id: sessionId } = React.use(params);
   const [currentTheme, setCurrentTheme] = useState<Theme>('default');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const themes: Theme[] = [
     'default',
@@ -278,7 +293,7 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
           <div className="max-w-[375px] md:max-w-4xl bg-gray-50 min-h-screen px-4 py-4">
             <div className="flex flex-col gap-4">
               {/* Preview Card */}
-              <CardPreview sessionId={sessionId} theme={currentTheme} />
+              <CardPreview sessionId={sessionId} theme={currentTheme} cardRef={cardRef} />
 
               {/* Page Indicators */}
               <PageIndicators currentPage={0} totalPages={3} />
@@ -292,7 +307,7 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
 
               {/* Save Button */}
               <div className="pt-4 pb-8 md:pb-12">
-                <SaveButtonWrapper sessionId={sessionId} />
+                <SaveButtonWrapper sessionId={sessionId} cardRef={cardRef} />
               </div>
             </div>
           </div>

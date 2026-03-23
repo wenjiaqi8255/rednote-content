@@ -71,7 +71,7 @@ export default function CardPreview({ markdown, theme, mode: _mode, onCapture, s
       const canvas = await html2canvas(element, {
         useCORS: true,
         logging: false,
-        background: '#ffffff',
+        backgroundColor: '#ffffff',
         width: rect.width * 2,
         height: rect.height * 2,
       });
