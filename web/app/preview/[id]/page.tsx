@@ -10,8 +10,9 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Menu } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useStorageContext } from '@/contexts/StorageContext';
 import { ResponsiveSidebar } from '@/components/ResponsiveSidebar';
 import SessionList from '@/components/SessionList';
@@ -81,9 +82,32 @@ function DesktopHeader({ sessionId }: { sessionId: string }) {
  */
 function CardPreview({ sessionId, theme }: { sessionId: string; theme: Theme }) {
   const { sessions, isLoading } = useStorageContext();
+  const router = useRouter();
+  const hasValidatedRef = useRef(false);
+
+  console.log('[CardPreview] Rendering:', {
+    sessionId,
+    isLoading,
+    sessionsCount: sessions.length,
+  });
+
+  // Validate session exists and redirect if not
+  useEffect(() => {
+    if (isLoading) return; // Wait for storage to load
+    if (hasValidatedRef.current) return; // Only validate once
+    hasValidatedRef.current = true;
+
+    const sessionExists = sessions.some(s => s.id === sessionId);
+    if (!sessionExists) {
+      console.warn('[CardPreview] Session not found, redirecting to home');
+      console.log('[CardPreview] Available sessions:', sessions.map(s => s.id));
+      router.push('/');
+    }
+  }, [sessionId, isLoading, sessions, router]);
 
   // Show loading state while data is being loaded
   if (isLoading) {
+    console.log('[CardPreview] Showing loading state');
     return (
       <div className="flex items-center justify-center h-96">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600" />
@@ -92,11 +116,14 @@ function CardPreview({ sessionId, theme }: { sessionId: string; theme: Theme }) 
   }
 
   const session = sessions.find((s) => s.id === sessionId);
+  console.log('[CardPreview] Found session:', session?.id || 'NOT FOUND');
 
   if (!session) {
+    // This will be shown briefly before redirect
+    console.log('[CardPreview] Session not found! sessions:', sessions.map(s => s.id));
     return (
-      <div className="flex items-center justify-center h-96 text-gray-500">
-        未找到会话
+      <div className="flex items-center justify-center h-96">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600" />
       </div>
     );
   }
@@ -112,12 +139,31 @@ function CardPreview({ sessionId, theme }: { sessionId: string; theme: Theme }) 
         ...
       </div>
 
-      {/* Card content */}
+      {/* Card content - sanitized by markdown-it */}
       <div
         dangerouslySetInnerHTML={{ __html: cardHTML }}
         className="flex-1 overflow-hidden"
       />
     </div>
+  );
+}
+
+/**
+ * Save Button Wrapper - extracts session title for SaveButton
+ */
+function SaveButtonWrapper({ sessionId }: { sessionId: string }) {
+  const { sessions } = useStorageContext();
+  const session = sessions.find((s) => s.id === sessionId);
+
+  return (
+    <SaveButton
+      sessionId={sessionId}
+      title={session?.title || '卡片'}
+      onGenerateImage={async () => {
+        // Placeholder implementation - return mock data
+        return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+      }}
+    />
   );
 }
 
@@ -198,14 +244,7 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
 
               {/* Save Button */}
               <div className="pt-4 pb-8 md:pb-12">
-                <SaveButton
-                  sessionId={sessionId}
-                  title={sessionId}
-                  onGenerateImage={async () => {
-                    // Placeholder implementation
-                    return 'data:image/png;base64,mock-image';
-                  }}
-                />
+                <SaveButtonWrapper sessionId={sessionId} />
               </div>
             </div>
           </div>
