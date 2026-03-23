@@ -168,9 +168,16 @@ export async function generateXHSCard(
     }),
   ]);
 
-  // 4. Assemble final HTML
-  return template
+  // 4. Assemble final HTML - inject CSS into the style tag content
+  const combinedCss = baseCss + '\n' + themeCss;
+
+  // Replace the style tag content (everything between <style> and </style>)
+  const htmlWithCss = template.replace(
+    /<style>([\s\S]*?)<\/style>/,
+    `<style>$1\n${combinedCss}</style>`
+  );
+
+  return htmlWithCss
     .replace('{{CONTENT}}', htmlContent)
-    .replace('{{PAGE_NUMBER}}', '') // No page number for single page
-    .replace('</style>', `</style><style>${baseCss}\n${themeCss}</style>`);
+    .replace('{{PAGE_NUMBER}}', ''); // No page number for single page
 }

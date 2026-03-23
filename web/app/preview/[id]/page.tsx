@@ -154,20 +154,44 @@ function CardPreview({ sessionId, theme }: { sessionId: string; theme: Theme }) 
 
   console.log('[CardPreview] HTML generated, rendering content');
 
+  // Extract CSS from the HTML and inject into a scoped style tag
+  const cssMatch = htmlContent.match(/<style>([\s\S]*?)<\/style>/);
+  const cardCss = cssMatch ? cssMatch[1] : '';
+  const contentWithoutStyle = htmlContent.replace(/<style>[\s\S]*?<\/style>/, '');
+
+  // Scale factor: card CSS is 1080px wide, container is 375px
+  // Using 360px as the target card width for better fit
+  const cardWidth = 1080;
+  const previewWidth = 360;
+  const scale = previewWidth / cardWidth; // ~0.333
+
   return (
     <div
-      className="bg-white border border-gray-200 rounded-lg p-8 md:p-12 h-96 flex flex-col gap-5 relative"
+      className="mx-auto overflow-hidden rounded-lg border border-gray-200"
+      style={{
+        width: `${previewWidth}px`,
+        height: '600px',
+        overflow: 'hidden',
+        margin: '0 auto',
+      }}
     >
-      {/* Page indicator */}
-      <div className="absolute top-5 right-5 text-sm text-gray-400">
-        ...
-      </div>
-
-      {/* Card content - sanitized by markdown-it */}
+      {/* Inject CSS into a scoped style tag */}
+      {cardCss && (
+        <style dangerouslySetInnerHTML={{ __html: cardCss }} />
+      )}
+      {/* Scale the card to fit the preview container */}
       <div
-        dangerouslySetInnerHTML={{ __html: htmlContent }}
-        className="flex-1 overflow-hidden"
-      />
+        style={{
+          transform: `scale(${scale})`,
+          transformOrigin: 'top left',
+          width: `${cardWidth}px`,
+          // Height auto-scales with width since card is not fixed-height
+          height: 'auto',
+        }}
+      >
+        {/* Card content without the duplicate style tag */}
+        <div dangerouslySetInnerHTML={{ __html: contentWithoutStyle }} />
+      </div>
     </div>
   );
 }
@@ -250,9 +274,9 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
         </ResponsiveSidebar>
 
         {/* Main Content Area */}
-        <div className="flex-1 min-w-0">
-          <div className="max-w-md mx-auto md:max-w-4xl bg-white min-h-screen">
-            <div className="p-4 md:p-6 flex flex-col gap-4">
+        <div className="flex-1 min-w-0 flex justify-center">
+          <div className="max-w-[375px] md:max-w-4xl bg-gray-50 min-h-screen px-4 py-4">
+            <div className="flex flex-col gap-4">
               {/* Preview Card */}
               <CardPreview sessionId={sessionId} theme={currentTheme} />
 
