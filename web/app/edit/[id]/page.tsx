@@ -80,14 +80,49 @@ function DesktopHeader({ sessionId }: { sessionId: string }) {
  */
 function UnifiedEditPageContent({ params }: { params: Promise<{ id: string }> }) {
   const { id: sessionId } = React.use(params);
-  const { selectSession } = useStorageContext();
+  const { selectSession, isLoading, currentSession, sessions, createSession } = useStorageContext();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const router = useRouter();
+  const hasValidatedRef = React.useRef(false);
 
-  // Select this session as current when page loads
+  console.log('[EditPage] Rendering with:', {
+    sessionId,
+    isLoading,
+    currentSessionId: currentSession?.id || 'null',
+    sessionsCount: sessions.length,
+  });
+
+  // Select this session as current when page loads (with validation)
   useEffect(() => {
-    selectSession(sessionId);
-  }, [sessionId, selectSession]);
+    if (isLoading) return; // Wait for storage to load
+    if (hasValidatedRef.current) return; // Only validate once
+    hasValidatedRef.current = true;
+
+    console.log('[EditPage] useEffect firing, validating session:', sessionId);
+    const sessionExists = sessions.some(s => s.id === sessionId);
+
+    if (sessionExists) {
+      console.log('[EditPage] Session exists, selecting:', sessionId);
+      selectSession(sessionId);
+    } else {
+      // Session doesn't exist in storage - this can happen if:
+      // 1. User navigated to a stale URL
+      // 2. localStorage was cleared
+      // 3. Session was deleted
+      console.warn('[EditPage] Session not found in storage:', sessionId);
+      console.log('[EditPage] Available sessions:', sessions.map(s => s.id));
+
+      // Create a new session and redirect
+      const newSessionId = createSession({
+        title: '新卡片',
+        markdown: '',
+        theme: 'default',
+        mode: 'separator',
+      });
+      console.log('[EditPage] Created new session, redirecting:', newSessionId);
+      router.push(`/edit/${newSessionId}`);
+    }
+  }, [sessionId, isLoading, sessions, selectSession, createSession, router]);
 
   const handleCreateNew = () => {
     setIsSidebarOpen(false);
@@ -107,7 +142,7 @@ function UnifiedEditPageContent({ params }: { params: Promise<{ id: string }> })
       <div className="flex">
         {/* Responsive Sidebar */}
         <ResponsiveSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)}>
-          <SessionList onCreateNew={handleCreateNew} />
+          <SessionList onCreateNew={handleCreateNew} navigateOnSelect={true} />
         </ResponsiveSidebar>
 
         {/* Main Content Area */}
