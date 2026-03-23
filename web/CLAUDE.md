@@ -40,7 +40,9 @@ Desktop (> 768px)          Mobile (≤ 768px)
 ```
 web/
 ├── app/
-│   ├── mobile/              # Mobile routes
+│   ├── edit/[id]/           # Unified editor (mobile + desktop)
+│   ├── preview/[id]/        # Unified preview (mobile + desktop)
+│   ├── mobile/              # Legacy mobile routes (deprecated)
 │   │   ├── edit/[id]/       # Session editor (auto-save)
 │   │   └── preview/[id]/    # Theme preview
 │   ├── page.tsx             # Desktop home + mobile redirect
@@ -98,6 +100,29 @@ expect(html).toContain('<h1>');
 expect(html).toMatch(/<h1/);
 expect(html).toMatch(/<span[^>]*katex/);
 ```
+
+## Testing
+
+```bash
+# Unit tests (Jest)
+npm test                    # All tests with coverage
+npm test -- --no-coverage   # Faster feedback
+
+# E2E tests (Playwright)
+npm run test:e2e            # Run all E2E tests
+npm run test:e2e -- --ui    # Interactive UI mode
+npm run test:e2e -- --debug # Debug mode
+```
+
+### Session Management Patterns
+
+**localStorage key**: `rednote-sessions`
+
+**SessionList navigation** (`components/SessionList.tsx`):
+- `navigateOnSelect={true}`: Click navigates to `/edit/[id]` (URL changes)
+- `navigateOnSelect={false}`: Click only updates localStorage, no navigation
+
+**Critical**: In edit page, use `navigateOnSelect={true}` so sidebar clicks actually navigate to the new session's URL.
 
 ### Mobile: Auto-Save Behavior
 
