@@ -290,25 +290,26 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Mobile Header */}
       <MobileHeader
         sessionId={sessionId}
         onMenuToggle={() => setIsSidebarOpen(!isSidebarOpen)}
       />
 
-      {/* Desktop Header */}
+      {/* Desktop Header - now inside flex-col flow */}
       <DesktopHeader sessionId={sessionId} />
 
-      <div className="flex">
+      {/* Main layout container - takes remaining height with flex-1 */}
+      <div className="flex flex-1 min-h-0">
         {/* Responsive Sidebar */}
         <ResponsiveSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)}>
           <SessionList onCreateNew={handleCreateNew} />
         </ResponsiveSidebar>
 
         {/* Main Content Area */}
-        <div className="flex-1 min-w-0 flex justify-center">
-          <div className="max-w-[375px] md:max-w-4xl bg-gray-50 min-h-screen px-4 py-4">
+        <div className="flex-1 min-w-0 flex justify-center pt-4 md:pt-0">
+          <div className="max-w-[375px] md:max-w-4xl bg-gray-50 min-h-full px-4">
             <div className="flex flex-col gap-4">
               {/* Preview Card */}
               <CardPreview sessionId={sessionId} theme={currentTheme} cardRef={cardRef} />

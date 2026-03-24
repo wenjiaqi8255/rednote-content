@@ -168,8 +168,24 @@ export async function generateXHSCard(
     }),
   ]);
 
-  // 4. Assemble final HTML - inject CSS into the style tag content
-  const combinedCss = baseCss + '\n' + themeCss;
+  // 4. Scope CSS variables to prevent global pollution
+  // Prefix all CSS variables to avoid conflicts with globals.css
+  const scopeCss = (css: string) => {
+    return css
+      // Wrap :root in a class to scope variables
+      .replace(/:root\s*\{/g, '.card-root {')
+      // Prefix CSS variables
+      .replace(/--([a-z-]+):/g, '--card-$1:')
+      // Scope element selectors to .card- prefix
+      .replace(/^body\s*\{/gm, '.card-body {')
+      .replace(/^\*\s*\{/gm, '.card-root * {');
+  };
+
+  const scopedBaseCss = scopeCss(baseCss);
+  const scopedThemeCss = scopeCss(themeCss);
+
+  // 5. Assemble final HTML - inject CSS into the style tag content
+  const combinedCss = scopedBaseCss + '\n' + scopedThemeCss;
 
   // Replace the style tag content (everything between <style> and </style>)
   const htmlWithCss = template.replace(

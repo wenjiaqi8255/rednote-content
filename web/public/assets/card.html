@@ -7,14 +7,20 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
-        
-        * {
+
+        /* Scoped to .card-root to prevent global pollution */
+        .card-root {
+            /* Reset scoped to this container only */
+        }
+
+        .card-root * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        body {
+        .card-root body,
+        body.card-body {
             font-family: 'Noto Sans SC', 'Source Han Sans CN', 'PingFang SC', 'Microsoft YaHei', sans-serif;
             width: 100%;
             min-height: 100%;
@@ -253,7 +259,7 @@
     </style>
 </head>
 <body>
-    <div class="card-container">
+    <div class="card-root card-container">
         <div class="card-inner">
             <div class="card-content">
                 {{CONTENT}}
