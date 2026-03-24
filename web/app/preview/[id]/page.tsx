@@ -81,7 +81,7 @@ function DesktopHeader({ sessionId }: { sessionId: string }) {
 /**
  * Card Preview Component
  */
-function CardPreview({ sessionId, theme, cardRef }: { sessionId: string; theme: Theme; cardRef: React.RefObject<HTMLDivElement | null> }) {
+function CardPreview({ sessionId, theme, cardRef, innerCardRef }: { sessionId: string; theme: Theme; cardRef: React.RefObject<HTMLDivElement | null>; innerCardRef: React.RefObject<HTMLDivElement | null> }) {
   const { sessions, isLoading } = useStorageContext();
   const router = useRouter();
   const hasValidatedRef = useRef(false);
@@ -183,6 +183,7 @@ function CardPreview({ sessionId, theme, cardRef }: { sessionId: string; theme: 
       )}
       {/* Scale the card to fit the preview container */}
       <div
+        ref={innerCardRef}
         style={{
           transform: `scale(${scale})`,
           transformOrigin: 'top left',
@@ -201,21 +202,30 @@ function CardPreview({ sessionId, theme, cardRef }: { sessionId: string; theme: 
 /**
  * Save Button Wrapper - extracts session title for SaveButton
  */
-function SaveButtonWrapper({ sessionId, cardRef }: { sessionId: string; cardRef: React.RefObject<HTMLDivElement | null> }) {
+function SaveButtonWrapper({ sessionId, innerCardRef }: { sessionId: string; innerCardRef: React.RefObject<HTMLDivElement | null> }) {
   const { sessions } = useStorageContext();
   const session = sessions.find((s) => s.id === sessionId);
 
   const handleGenerateImage = async (): Promise<string> => {
-    if (!cardRef.current) {
+    if (!innerCardRef.current) {
       throw new Error('Card element not found');
     }
 
-    const canvas = await html2canvas(cardRef.current, {
+    const canvas = await html2canvas(innerCardRef.current, {
       useCORS: true,
       logging: false,
-      backgroundColor: '#ffffff',
-      scale: 2, // 2x for retina quality
+      backgroundColor: null, // Transparent background to show card's own gradient
+      scale: 1, // No additional scaling - card is already at full resolution
+      width: 1080, // Full width of the card
       onclone: (clonedDoc) => {
+        // Find the cloned inner card element
+        const clonedCard = clonedDoc.querySelector('[style*="transform: scale"]') as HTMLElement;
+        if (clonedCard) {
+          // Remove the scale transform to capture at full resolution
+          clonedCard.style.transform = 'none';
+          clonedCard.style.width = '1080px';
+        }
+
         // Remove CSS rules with lab() / lch() color functions
         // html2canvas doesn't support these modern CSS color syntaxes
         const styleSheets = Array.from(clonedDoc.styleSheets);
@@ -273,6 +283,7 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
   const [currentTheme, setCurrentTheme] = useState<Theme>('default');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const innerCardRef = useRef<HTMLDivElement>(null);
 
   const themes: Theme[] = [
     'default',
@@ -312,7 +323,7 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
           <div className="max-w-[375px] md:max-w-4xl bg-gray-50 min-h-full px-4">
             <div className="flex flex-col gap-4">
               {/* Preview Card */}
-              <CardPreview sessionId={sessionId} theme={currentTheme} cardRef={cardRef} />
+              <CardPreview sessionId={sessionId} theme={currentTheme} cardRef={cardRef} innerCardRef={innerCardRef} />
 
               {/* Page Indicators */}
               <PageIndicators currentPage={0} totalPages={3} />
@@ -326,7 +337,7 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
 
               {/* Save Button */}
               <div className="pt-4 pb-8 md:pb-12">
-                <SaveButtonWrapper sessionId={sessionId} cardRef={cardRef} />
+                <SaveButtonWrapper sessionId={sessionId} innerCardRef={innerCardRef} />
               </div>
             </div>
           </div>
