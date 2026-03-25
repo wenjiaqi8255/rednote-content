@@ -119,8 +119,9 @@ describe('XHS Renderer - generateXHSCard', () => {
     // Should include CSS (mocked CSS is "mock css")
     expect(html).toContain('mock css');
 
-    // Should have embedded both base and theme CSS
-    expect(html).toContain('</style><style>');
+    // Should have embedded both base and theme CSS (both "mock css" strings inside one style tag)
+    const matches = html.match(/mock css/g);
+    expect(matches).toHaveLength(2);
   });
 
   test('should embed markdown content in card-content div', async () => {
