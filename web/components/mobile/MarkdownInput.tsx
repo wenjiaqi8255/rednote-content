@@ -37,6 +37,7 @@ const inputStyles = {
     background: 'transparent',
     width: '100%',
     flex: 1,
+    minHeight: '60vh', // Tall textarea so users can see/edit full content
     resize: 'none' as const,
   },
 };
@@ -144,6 +145,7 @@ export function MarkdownInput({
         gap: '16px',
         padding: '20px',
         height: '100%',
+        minHeight: 0, // Allow flex child to shrink below content size
       }}
     >
       {/* Title Input */}

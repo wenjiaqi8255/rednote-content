@@ -389,7 +389,7 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
   const { id: sessionId } = React.use(params);
   const { sessions, isLoading } = useStorageContext();
   const [currentTheme, setCurrentTheme] = useState<Theme>('default');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Hidden by default for focused preview
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [pages, setPages] = useState<string[]>([]);
   const cardRef = useRef<HTMLDivElement>(null);
