@@ -77,6 +77,10 @@ function DesktopHeader({ sessionId }: { sessionId: string }) {
 
 /**
  * Unified Edit Page Content
+ *
+ * Layout structure:
+ * - Mobile: MobileHeader (fixed z-[51]) + flex column (sidebar overlay, content below)
+ * - Desktop: flex row (sidebar z-40 + content with DesktopHeader)
  */
 function UnifiedEditPageContent({ params }: { params: Promise<{ id: string }> }) {
   const { id: sessionId } = React.use(params);
@@ -85,41 +89,24 @@ function UnifiedEditPageContent({ params }: { params: Promise<{ id: string }> })
   const router = useRouter();
   const hasValidatedRef = React.useRef(false);
 
-  console.log('[EditPage] Rendering with:', {
-    sessionId,
-    isLoading,
-    currentSessionId: currentSession?.id || 'null',
-    sessionsCount: sessions.length,
-  });
-
   // Select this session as current when page loads (with validation)
   useEffect(() => {
     if (isLoading) return; // Wait for storage to load
     if (hasValidatedRef.current) return; // Only validate once
     hasValidatedRef.current = true;
 
-    console.log('[EditPage] useEffect firing, validating session:', sessionId);
     const sessionExists = sessions.some(s => s.id === sessionId);
 
     if (sessionExists) {
-      console.log('[EditPage] Session exists, selecting:', sessionId);
       selectSession(sessionId);
     } else {
-      // Session doesn't exist in storage - this can happen if:
-      // 1. User navigated to a stale URL
-      // 2. localStorage was cleared
-      // 3. Session was deleted
-      console.warn('[EditPage] Session not found in storage:', sessionId);
-      console.log('[EditPage] Available sessions:', sessions.map(s => s.id));
-
-      // Create a new session and redirect
+      // Session doesn't exist in storage
       const newSessionId = createSession({
         title: '新卡片',
         markdown: '',
         theme: 'default',
         mode: 'auto-split',
       });
-      console.log('[EditPage] Created new session, redirecting:', newSessionId);
       router.push(`/edit/${newSessionId}`);
     }
   }, [sessionId, isLoading, sessions, selectSession, createSession, router]);
@@ -136,29 +123,28 @@ function UnifiedEditPageContent({ params }: { params: Promise<{ id: string }> })
         onMenuToggle={() => setIsSidebarOpen(!isSidebarOpen)}
       />
 
-      {/* Desktop Header — flex child on desktop */}
-      <DesktopHeader sessionId={sessionId} />
-
-      <div className="flex">
+      {/* Main layout: flex row on desktop, sidebar overlay on mobile */}
+      <div className="flex flex-1 min-h-0">
         {/* Responsive Sidebar */}
         <ResponsiveSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)}>
           <SessionList onCreateNew={handleCreateNew} navigateOnSelect={true} />
         </ResponsiveSidebar>
 
-        {/* Main Content Area — slides right on mobile to make room for the fixed sidebar */}
+        {/* Content area — offset by sidebar width on desktop */}
         <div
-          className="flex-1 min-w-0 h-screen relative z-50 md:relative md:z-auto transition-transform duration-300 ease-in-out"
-          style={{
-            transform: isSidebarOpen ? 'translateX(320px)' : 'translateX(0)',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
+          className={`
+            flex-1 min-w-0 flex flex-col
+            ml-0 md:ml-80
+            transition-transform duration-300 ease-in-out
+            ${isSidebarOpen ? '-translate-x-full md:translate-x-0' : 'translate-x-0'}
+          `}
         >
-          {/* Desktop header on desktop, spacer on mobile (mobile header is fixed above) */}
+          {/* Desktop Header — only shown on desktop, inside flex column */}
           <div className="hidden md:block">
             <DesktopHeader sessionId={sessionId} />
           </div>
 
+          {/* Editor area */}
           <div className="flex-1 min-h-0">
             <div className="w-full max-w-2xl mx-auto h-full bg-white overflow-x-auto">
               <MarkdownInput sessionId={sessionId} />
