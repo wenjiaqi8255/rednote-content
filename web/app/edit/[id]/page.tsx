@@ -147,7 +147,7 @@ function UnifiedEditPageContent({ params }: { params: Promise<{ id: string }> })
 
         {/* Main Content Area */}
         <div className="flex-1 min-w-0" style={{ display: 'flex', flexDirection: 'column' }}>
-          <div className="max-w-md mx-auto md:max-w-4xl bg-white flex-1">
+          <div className="max-w-md mx-auto md:max-w-3xl bg-white flex-1">
             <MarkdownInput sessionId={sessionId} />
           </div>
         </div>

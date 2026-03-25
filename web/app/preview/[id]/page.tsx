@@ -465,8 +465,8 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
 
       {/* Main layout container - takes remaining height with flex-1 */}
       <div className="flex flex-1 min-h-0">
-        {/* Responsive Sidebar */}
-        <ResponsiveSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)}>
+        {/* Preview page: sidebar is optional — always hidden on desktop, togglable on mobile */}
+        <ResponsiveSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} desktopHidden>
           <SessionList onCreateNew={handleCreateNew} />
         </ResponsiveSidebar>
 
