@@ -19,7 +19,7 @@ import { ResponsiveSidebar } from '@/components/ResponsiveSidebar';
 import SessionList from '@/components/SessionList';
 import { ThemeSelector } from '@/components/mobile/ThemeSelector';
 import { SaveButton } from '@/components/mobile/SaveButton';
-import { generateXHSCard, type Theme } from '@/lib/xhs-renderer';
+import { generateXHSCard, splitMarkdownBySeparator, splitMarkdownByHeight, type Theme } from '@/lib/xhs-renderer';
 import Link from 'next/link';
 
 /**
@@ -81,7 +81,14 @@ function DesktopHeader({ sessionId }: { sessionId: string }) {
 /**
  * Card Preview Component
  */
-function CardPreview({ sessionId, theme, cardRef, innerCardRef }: { sessionId: string; theme: Theme; cardRef: React.RefObject<HTMLDivElement | null>; innerCardRef: React.RefObject<HTMLDivElement | null> }) {
+function CardPreview({ sessionId, theme, cardRef, innerCardRef, currentPageIndex, pages }: {
+  sessionId: string;
+  theme: Theme;
+  cardRef: React.RefObject<HTMLDivElement | null>;
+  innerCardRef: React.RefObject<HTMLDivElement | null>;
+  currentPageIndex: number;
+  pages: string[];
+}) {
   const { sessions, isLoading } = useStorageContext();
   const router = useRouter();
   const hasValidatedRef = useRef(false);
@@ -91,6 +98,8 @@ function CardPreview({ sessionId, theme, cardRef, innerCardRef }: { sessionId: s
     sessionId,
     isLoading,
     sessionsCount: sessions.length,
+    currentPageIndex,
+    totalPages: pages.length,
   });
 
   const session = sessions.find((s) => s.id === sessionId);
@@ -110,18 +119,21 @@ function CardPreview({ sessionId, theme, cardRef, innerCardRef }: { sessionId: s
     }
   }, [sessionId, isLoading, sessions, router]);
 
-  // Generate HTML when session or theme changes — MUST be async via useEffect
+  // Generate HTML for current page when page index or theme changes
   useEffect(() => {
-    if (!session) return;
+    if (!session || pages.length === 0) return;
+
+    const currentMarkdown = pages[currentPageIndex] || '';
+    if (!currentMarkdown) return;
 
     const generateHtml = async () => {
-      console.log('[CardPreview] Generating HTML for theme:', theme);
-      const html = await generateXHSCard(session.markdown, theme);
+      console.log('[CardPreview] Generating HTML for page:', currentPageIndex, 'theme:', theme);
+      const html = await generateXHSCard(currentMarkdown, theme);
       setHtmlContent(html);
     };
 
     generateHtml();
-  }, [session?.markdown, session?.id, theme]);
+  }, [currentPageIndex, pages, session?.id, theme]);
 
   // Show loading state while data is being loaded
   if (isLoading) {
@@ -172,7 +184,8 @@ function CardPreview({ sessionId, theme, cardRef, innerCardRef }: { sessionId: s
       className="mx-auto overflow-hidden rounded-lg border border-gray-200"
       style={{
         width: `${previewWidth}px`,
-        height: '600px',
+        height: 'auto',
+        minHeight: '200px',
         overflow: 'hidden',
         margin: '0 auto',
       }}
@@ -201,12 +214,18 @@ function CardPreview({ sessionId, theme, cardRef, innerCardRef }: { sessionId: s
 
 /**
  * Save Button Wrapper - extracts session title for SaveButton
+ * Supports multi-page saving with ZIP download
  */
-function SaveButtonWrapper({ sessionId, innerCardRef }: { sessionId: string; innerCardRef: React.RefObject<HTMLDivElement | null> }) {
+function SaveButtonWrapper({ sessionId, innerCardRef, pages, setCurrentPageIndex }: {
+  sessionId: string;
+  innerCardRef: React.RefObject<HTMLDivElement | null>;
+  pages: string[];
+  setCurrentPageIndex: (index: number) => void;
+}) {
   const { sessions } = useStorageContext();
   const session = sessions.find((s) => s.id === sessionId);
 
-  const handleGenerateImage = async (): Promise<string> => {
+  const generateImageDataUrl = async (): Promise<string> => {
     if (!innerCardRef.current) {
       throw new Error('Card element not found');
     }
@@ -248,11 +267,50 @@ function SaveButtonWrapper({ sessionId, innerCardRef }: { sessionId: string; inn
     return canvas.toDataURL('image/png');
   };
 
+  const handleGenerateImage = async (): Promise<string> => {
+    return generateImageDataUrl();
+  };
+
+  const handleSaveAll = async () => {
+    if (!innerCardRef.current || pages.length === 0) return;
+
+    try {
+      // Dynamically import JSZip to reduce bundle size
+      const JSZip = (await import('jszip')).default;
+      const zip = new JSZip();
+
+      for (let i = 0; i < pages.length; i++) {
+        // Switch to page i
+        setCurrentPageIndex(i);
+        // Wait for re-render
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        const dataUrl = await generateImageDataUrl();
+        // Convert data URL to blob
+        const response = await fetch(dataUrl);
+        const blob = await response.blob();
+        zip.file(`page-${i + 1}.png`, blob);
+      }
+
+      // Generate and download ZIP
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(zipBlob);
+      link.download = `${session?.title || '卡片'}-${Date.now()}.zip`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error('Failed to save all pages:', error);
+    }
+  };
+
   return (
     <SaveButton
       sessionId={sessionId}
       title={session?.title || '卡片'}
       onGenerateImage={handleGenerateImage}
+      onSaveAll={pages.length > 1 ? handleSaveAll : undefined}
+      totalPages={pages.length}
     />
   );
 }
@@ -261,16 +319,65 @@ function SaveButtonWrapper({ sessionId, innerCardRef }: { sessionId: string; inn
  * Page Indicators
  */
 function PageIndicators({ currentPage, totalPages }: { currentPage: number; totalPages: number }) {
+  if (totalPages <= 1) return null;
+
   return (
     <div className="flex gap-2 justify-center">
       {Array.from({ length: totalPages }).map((_, index) => (
         <div
           key={index}
-          className={`w-2 h-2 rounded-full ${
-            index === currentPage ? 'bg-red-600' : 'bg-gray-200'
+          className={`w-2 h-2 rounded-full transition-colors ${
+            index === currentPage ? 'bg-red-600' : 'bg-gray-300'
           }`}
         />
       ))}
+    </div>
+  );
+}
+
+/**
+ * Navigation Arrows for carousel
+ */
+function NavigationArrows({
+  currentPage,
+  totalPages,
+  onPrev,
+  onNext,
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPrev: () => void;
+  onNext: () => void;
+}) {
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="flex items-center justify-between px-4">
+      <button
+        onClick={onPrev}
+        disabled={currentPage === 0}
+        className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
+        aria-label="上一页"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+      </button>
+
+      <span className="text-sm text-gray-500">
+        {currentPage + 1} / {totalPages}
+      </span>
+
+      <button
+        onClick={onNext}
+        disabled={currentPage === totalPages - 1}
+        className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
+        aria-label="下一页"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+      </button>
     </div>
   );
 }
@@ -280,8 +387,11 @@ function PageIndicators({ currentPage, totalPages }: { currentPage: number; tota
  */
 function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }> }) {
   const { id: sessionId } = React.use(params);
+  const { sessions, isLoading } = useStorageContext();
   const [currentTheme, setCurrentTheme] = useState<Theme>('default');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [pages, setPages] = useState<string[]>([]);
   const cardRef = useRef<HTMLDivElement>(null);
   const innerCardRef = useRef<HTMLDivElement>(null);
 
@@ -295,6 +405,48 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
     'professional',
     'sketch',
   ];
+
+  const session = sessions.find((s) => s.id === sessionId);
+
+  // Split markdown into pages when session changes
+  useEffect(() => {
+    if (!session || isLoading) return;
+
+    const mode = session.mode || 'auto-split';
+
+    const doSplit = async () => {
+      let splitPages: string[];
+
+      if (mode === 'auto-split') {
+        // Auto-split by height using DOM measurement (async)
+        splitPages = await splitMarkdownByHeight(session.markdown);
+      } else if (mode === 'separator') {
+        // Split by --- separator
+        splitPages = splitMarkdownBySeparator(session.markdown);
+      } else {
+        // Single page mode
+        splitPages = [session.markdown];
+      }
+
+      setPages(splitPages.length > 0 ? splitPages : ['']);
+      setCurrentPageIndex(0);
+    };
+
+    doSplit();
+  }, [session?.markdown, session?.mode, isLoading, sessionId]);
+
+  // Navigation handlers
+  const handlePrevPage = () => {
+    if (currentPageIndex > 0) {
+      setCurrentPageIndex(currentPageIndex - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPageIndex < pages.length - 1) {
+      setCurrentPageIndex(currentPageIndex + 1);
+    }
+  };
 
   const handleCreateNew = () => {
     setIsSidebarOpen(false);
@@ -322,11 +474,26 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
         <div className="flex-1 min-w-0 flex justify-center pt-4 md:pt-0">
           <div className="max-w-[375px] md:max-w-4xl bg-gray-50 min-h-full px-4">
             <div className="flex flex-col gap-4">
+              {/* Navigation Arrows */}
+              <NavigationArrows
+                currentPage={currentPageIndex}
+                totalPages={pages.length}
+                onPrev={handlePrevPage}
+                onNext={handleNextPage}
+              />
+
               {/* Preview Card */}
-              <CardPreview sessionId={sessionId} theme={currentTheme} cardRef={cardRef} innerCardRef={innerCardRef} />
+              <CardPreview
+                sessionId={sessionId}
+                theme={currentTheme}
+                cardRef={cardRef}
+                innerCardRef={innerCardRef}
+                currentPageIndex={currentPageIndex}
+                pages={pages}
+              />
 
               {/* Page Indicators */}
-              <PageIndicators currentPage={0} totalPages={3} />
+              <PageIndicators currentPage={currentPageIndex} totalPages={pages.length} />
 
               {/* Theme Selector */}
               <ThemeSelector
@@ -337,7 +504,12 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
 
               {/* Save Button */}
               <div className="pt-4 pb-8 md:pb-12">
-                <SaveButtonWrapper sessionId={sessionId} innerCardRef={innerCardRef} />
+                <SaveButtonWrapper
+                  sessionId={sessionId}
+                  innerCardRef={innerCardRef}
+                  pages={pages}
+                  setCurrentPageIndex={setCurrentPageIndex}
+                />
               </div>
             </div>
           </div>
