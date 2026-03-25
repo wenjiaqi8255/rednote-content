@@ -23,7 +23,7 @@ interface ResponsiveSidebarProps {
 export function ResponsiveSidebar({ isOpen, onClose, children, desktopHidden }: ResponsiveSidebarProps) {
   const sidebarClass = desktopHidden
     ? 'hidden'
-    : `fixed md:relative inset-y-0 left-0 z-50 w-80 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`;
+    : `fixed md:flex-1 md:max-w-80 md:min-w-64 inset-y-0 left-0 z-50 w-80 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`;
 
   const backdropClass = desktopHidden
     ? 'hidden'
