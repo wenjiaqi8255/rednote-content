@@ -110,6 +110,10 @@ body {
     color: var(--text-light);
     font-size: 42px;
     line-height: 1.7;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    overflow-x: hidden;
+    max-width: 100%;
 }
 
 .card-content h1 {

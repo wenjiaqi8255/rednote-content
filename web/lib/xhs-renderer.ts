@@ -79,6 +79,342 @@ export function splitMarkdownBySeparator(markdown: string): string[] {
     .filter(part => part.length > 0);
 }
 
+/**
+ * Options for splitMarkdownByHeight
+ * Based on actual XHS card dimensions:
+ * - Card width: 1080px
+ * - Padding: 50px (left + right)
+ * - Content width: 980px
+ * - Font: 42px
+ * - Line-height: 1.7 → 71.4px per line
+ * - Inner card height: ~1340px (1440 - 100 padding)
+ * - ~18-19 lines fit in one card
+ */
+interface SplitOptions {
+  cardWidth?: number;       // 1080px default
+  padding?: number;         // 50px default
+  fontSize?: number;        // 42px default
+  lineHeight?: number;      // 1.7 default (unitless multiplier)
+  maxPageHeight?: number;   // ~1340px default (inner card height)
+}
+
+// Default options matching the XHS card CSS
+const DEFAULT_OPTIONS: Required<SplitOptions> = {
+  cardWidth: 1080,
+  padding: 50,
+  fontSize: 42,
+  lineHeight: 1.7,
+  maxPageHeight: 1340,
+};
+
+/**
+ * Measure the rendered height of markdown content using a hidden DOM element.
+ * This gives accurate results based on actual CSS rules.
+ */
+async function measureMarkdownHeight(
+  markdown: string,
+  options: Required<SplitOptions>
+): Promise<number> {
+  if (!markdown.trim()) return 0;
+
+  const contentWidth = options.cardWidth - options.padding * 2;
+
+  // Render markdown to HTML using markdown-it
+  const html = md.render(markdown);
+
+  // Create a hidden measurement container
+  // Use word-break: break-all to force wrapping even for unspaced CJK text
+  // overflow-wrap: anywhere is the modern equivalent of overflow-wrap: break-word
+  // but allows breaking anywhere, combined with break-all for CJK
+  const container = document.createElement('div');
+  container.style.cssText = [
+    'position:absolute',
+    'visibility:hidden',
+    'pointer-events:none',
+    `width:${contentWidth}px`,
+    `font-size:${options.fontSize}px`,
+    `line-height:${options.lineHeight}`,
+    'font-family:\'Source Han Sans CN\',\'PingFang SC\',\'Microsoft YaHei\',-apple-system,sans-serif',
+    'overflow-wrap:anywhere',
+    'word-break:break-all',
+    'padding:0',
+    'margin:0',
+    'border:0',
+    'box-sizing:border-box',
+    'white-space:normal',
+  ].join(';');
+  container.innerHTML = html;
+  document.body.appendChild(container);
+
+  const height = container.offsetHeight;
+  document.body.removeChild(container);
+
+  return height;
+}
+
+/**
+ * Split markdown content by estimated height using DOM measurement.
+ *
+ * Algorithm:
+ * 1. Split content by paragraphs (\n\n boundaries)
+ * 2. For each paragraph, measure its DOM height
+ * 3. Accumulate paragraphs until height exceeds maxPageHeight
+ * 4. Start a new page when exceeded
+ * 5. If a single paragraph is taller than maxPageHeight, recursively split by lines
+ *
+ * This gives accurate pagination based on actual rendered heights,
+ * not rough character/line estimates.
+ */
+export async function splitMarkdownByHeight(
+  markdown: string,
+  options: SplitOptions = {}
+): Promise<string[]> {
+  const opts: Required<SplitOptions> = { ...DEFAULT_OPTIONS, ...options };
+
+  if (!markdown.trim()) return [''];
+
+  // Split by paragraph boundaries (2+ consecutive newlines)
+  const rawParts = markdown.split(/(\n{2,})/);
+
+  // Group text fragments with their separators
+  const paragraphs: string[] = [];
+  let pending = '';
+
+  for (const part of rawParts) {
+    if (part.match(/^\n{2,}$/)) {
+      // Separator - add to pending
+      pending += part;
+    } else {
+      // Content - combine with pending and start new paragraph
+      const combined = pending + part;
+      if (combined.trim()) {
+        paragraphs.push(combined.trim());
+      }
+      pending = '';
+    }
+  }
+  if (pending.trim()) {
+    paragraphs.push(pending.trim());
+  }
+
+  if (paragraphs.length === 0) return [''];
+
+  // Assemble pages by measuring actual DOM height
+  const pages: string[] = [];
+  let currentPage = '';
+  let currentHeight = 0;
+
+  for (let i = 0; i < paragraphs.length; i++) {
+    const para = paragraphs[i];
+
+    // Check for explicit separator within paragraph
+    if (/^\s*[-*_]{3,}\s*$/.test(para)) {
+      // Explicit --- separator → force new page
+      if (currentPage.trim()) {
+        pages.push(currentPage.trim());
+      }
+      currentPage = '';
+      currentHeight = 0;
+      continue;
+    }
+
+    // Measure this paragraph's height
+    const paraHeight = await measureMarkdownHeight(para, opts);
+
+    // If this single paragraph is taller than a page, recursively split it
+    if (paraHeight > opts.maxPageHeight) {
+      // First, flush current page if any content exists
+      if (currentPage.trim()) {
+        pages.push(currentPage.trim());
+        currentPage = '';
+        currentHeight = 0;
+      }
+      // Recursively split the oversized paragraph by line-level chunks
+      const subPages = await splitParagraphByHeight(para, opts);
+      for (const subPage of subPages) {
+        pages.push(subPage);
+      }
+      continue;
+    }
+
+    // Try adding this paragraph to current page
+    const testPage = currentPage ? currentPage + '\n\n' + para : para;
+    const newHeight = currentHeight + paraHeight;
+
+    // If adding this paragraph exceeds max height, start a new page
+    if (newHeight > opts.maxPageHeight && currentPage.length > 0) {
+      // Save current page
+      pages.push(currentPage.trim());
+      currentPage = para;
+      currentHeight = paraHeight;
+    } else {
+      currentPage = testPage;
+      currentHeight = newHeight;
+    }
+  }
+
+  // Add the final page
+  if (currentPage.trim()) {
+    pages.push(currentPage.trim());
+  }
+
+  return pages.length > 0 ? pages : [''];
+}
+
+/**
+ * Recursively split a paragraph into chunks that fit within maxPageHeight.
+ * Used when a single paragraph (even with CSS wrapping) exceeds the page limit.
+ * Splits by estimating lines based on content width.
+ */
+async function splitParagraphByHeight(
+  para: string,
+  opts: Required<SplitOptions>
+): Promise<string[]> {
+  const lines = para.split('\n');
+  const pages: string[] = [];
+  let currentPage = '';
+  let currentHeight = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    // Measure each line
+    const lineHeight = await measureMarkdownHeight(line, opts);
+
+    // If a single line is taller than a page, split by character groups
+    if (lineHeight > opts.maxPageHeight) {
+      if (currentPage.trim()) {
+        pages.push(currentPage.trim());
+        currentPage = '';
+        currentHeight = 0;
+      }
+      // Split by character groups based on estimated chars per line
+      const contentWidth = opts.cardWidth - opts.padding * 2;
+      const charsPerLine = Math.floor(contentWidth / opts.fontSize) * 2; // conservative estimate
+      const chars = line;
+
+      for (let j = 0; j < chars.length; j += charsPerLine) {
+        const chunk = chars.slice(j, j + charsPerLine);
+        const chunkHeight = await measureMarkdownHeight(chunk, opts);
+
+        if (currentHeight + chunkHeight > opts.maxPageHeight && currentPage.length > 0) {
+          pages.push(currentPage.trim());
+          currentPage = '';
+          currentHeight = 0;
+        }
+        currentPage = currentPage ? currentPage + '\n' + chunk : chunk;
+        currentHeight += chunkHeight;
+      }
+      continue;
+    }
+
+    // Try adding this line to current page
+    const testPage = currentPage ? currentPage + '\n' + line : line;
+    const newHeight = currentHeight + lineHeight;
+
+    if (newHeight > opts.maxPageHeight && currentPage.length > 0) {
+      pages.push(currentPage.trim());
+      currentPage = line;
+      currentHeight = lineHeight;
+    } else {
+      currentPage = testPage;
+      currentHeight = newHeight;
+    }
+  }
+
+  if (currentPage.trim()) {
+    pages.push(currentPage.trim());
+  }
+
+  return pages.length > 0 ? pages : [para];
+}
+
+/**
+ * Synchronous version using line-count estimation.
+ * Less accurate than the async DOM version but works without DOM access.
+ * Uses actual card CSS parameters: 42px font, 1.7 line-height, ~23 chars/line.
+ */
+export function splitMarkdownByHeightSync(
+  markdown: string,
+  maxPageHeight: number = 1340
+): string[] {
+  if (!markdown.trim()) return [''];
+
+  const FONT_SIZE = 42;
+  const LINE_HEIGHT = 1.7;
+  const LINE_HEIGHT_PX = FONT_SIZE * LINE_HEIGHT; // 71.4px
+  const CONTENT_WIDTH = 1080 - 50 * 2; // 980px
+  const CHARS_PER_LINE = Math.floor(CONTENT_WIDTH / FONT_SIZE); // ~23 chars
+
+  // Split by paragraph boundaries
+  const rawParts = markdown.split(/(\n{2,})/);
+  const paragraphs: string[] = [];
+  let pending = '';
+
+  for (const part of rawParts) {
+    if (part.match(/^\n{2,}$/)) {
+      pending += part;
+    } else {
+      const combined = pending + part;
+      if (combined.trim()) paragraphs.push(combined.trim());
+      pending = '';
+    }
+  }
+  if (pending.trim()) paragraphs.push(pending.trim());
+  if (paragraphs.length === 0) return [''];
+
+  // Estimate height per paragraph
+  const pages: string[] = [];
+  let currentPage = '';
+  let currentHeight = 0;
+
+  for (const para of paragraphs) {
+    if (/^\s*[-*_]{3,}\s*$/.test(para)) {
+      if (currentPage.trim()) pages.push(currentPage.trim());
+      currentPage = '';
+      currentHeight = 0;
+      continue;
+    }
+
+    // Estimate paragraph height based on content
+    let paraHeight = 0;
+    const lines = para.split('\n');
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) {
+        paraHeight += LINE_HEIGHT_PX * 0.5;
+      } else if (/^#{1,3}\s/.test(trimmed)) {
+        // Heading: takes more space
+        const chars = trimmed.replace(/^#+\s/, '').length;
+        const lines_ = Math.ceil(chars / CHARS_PER_LINE);
+        paraHeight += LINE_HEIGHT_PX * (lines_ + 1.5);
+      } else if (/^[-*+]\s/.test(trimmed) || /^\d+\.\s/.test(trimmed)) {
+        // List item
+        const content = trimmed.replace(/^[-*+]\s|^\d+\.\s/, '');
+        const lines_ = Math.ceil(content.length / CHARS_PER_LINE);
+        paraHeight += LINE_HEIGHT_PX * lines_;
+      } else {
+        // Regular paragraph
+        const lines_ = Math.ceil(trimmed.length / CHARS_PER_LINE);
+        paraHeight += LINE_HEIGHT_PX * lines_;
+      }
+    }
+
+    const newHeight = currentHeight + paraHeight;
+    if (newHeight > maxPageHeight && currentPage.length > 0) {
+      pages.push(currentPage.trim());
+      currentPage = para;
+      currentHeight = paraHeight;
+    } else {
+      currentPage = currentPage ? currentPage + '\n\n' + para : para;
+      currentHeight = newHeight;
+    }
+  }
+
+  if (currentPage.trim()) pages.push(currentPage.trim());
+  return pages.length > 0 ? pages : [''];
+}
+
 // Theme accent colors (simplified from render_xhs_v2.js STYLES)
 const THEME_COLORS: Record<Theme, string> = {
   'default': '#6366f1',
