@@ -23,11 +23,11 @@ interface ResponsiveSidebarProps {
 export function ResponsiveSidebar({ isOpen, onClose, children, desktopHidden }: ResponsiveSidebarProps) {
   const sidebarClass = desktopHidden
     ? 'hidden'
-    : `fixed md:flex-1 md:max-w-80 md:min-w-64 inset-y-0 left-0 z-50 w-80 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`;
+    : `fixed md:flex-1 md:max-w-80 md:min-w-64 inset-y-0 left-0 z-40 w-80 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`;
 
   const backdropClass = desktopHidden
     ? 'hidden'
-    : `fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`;
+    : `fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`;
 
   return (
     <>

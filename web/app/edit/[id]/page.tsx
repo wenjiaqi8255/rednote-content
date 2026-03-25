@@ -25,7 +25,7 @@ import Link from 'next/link';
 function MobileHeader({ sessionId, onMenuToggle }: { sessionId: string; onMenuToggle: () => void }) {
   return (
     <header
-      className="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200 sticky top-0 z-30"
+      className="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-[51]"
       style={{ height: '56px' }}
     >
       {/* Menu Button */}
@@ -130,13 +130,13 @@ function UnifiedEditPageContent({ params }: { params: Promise<{ id: string }> })
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Mobile Header */}
+      {/* Mobile Header — fixed above sidebar on mobile, hidden on desktop */}
       <MobileHeader
         sessionId={sessionId}
         onMenuToggle={() => setIsSidebarOpen(!isSidebarOpen)}
       />
 
-      {/* Desktop Header */}
+      {/* Desktop Header — flex child on desktop */}
       <DesktopHeader sessionId={sessionId} />
 
       <div className="flex">
@@ -145,10 +145,24 @@ function UnifiedEditPageContent({ params }: { params: Promise<{ id: string }> })
           <SessionList onCreateNew={handleCreateNew} navigateOnSelect={true} />
         </ResponsiveSidebar>
 
-        {/* Main Content Area */}
-        <div className="flex-1 min-w-0 h-screen" style={{ display: 'flex', flexDirection: 'column' }}>
-          <div className="w-full max-w-2xl mx-auto h-full bg-white overflow-x-auto">
-            <MarkdownInput sessionId={sessionId} />
+        {/* Main Content Area — slides right on mobile to make room for the fixed sidebar */}
+        <div
+          className="flex-1 min-w-0 h-screen relative z-50 md:relative md:z-auto transition-transform duration-300 ease-in-out"
+          style={{
+            transform: isSidebarOpen ? 'translateX(320px)' : 'translateX(0)',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          {/* Desktop header on desktop, spacer on mobile (mobile header is fixed above) */}
+          <div className="hidden md:block">
+            <DesktopHeader sessionId={sessionId} />
+          </div>
+
+          <div className="flex-1 min-h-0">
+            <div className="w-full max-w-2xl mx-auto h-full bg-white overflow-x-auto">
+              <MarkdownInput sessionId={sessionId} />
+            </div>
           </div>
         </div>
       </div>
