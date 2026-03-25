@@ -22,7 +22,7 @@ interface FormProps {
 export default function Form({ onSubmit, isLoading, defaultValue }: FormProps) {
   const [markdown, setMarkdown] = useState(defaultValue?.markdown || '');
   const [theme, setTheme] = useState(defaultValue?.theme || 'default');
-  const [mode, setMode] = useState(defaultValue?.mode || 'separator');
+  const [mode, setMode] = useState(defaultValue?.mode || 'auto-split');
   const [title, setTitle] = useState(defaultValue?.title || '');
   const [recommendedTheme, setRecommendedTheme] = useState<string | null>(null);
 
@@ -122,8 +122,8 @@ export default function Form({ onSubmit, isLoading, defaultValue }: FormProps) {
           onChange={(e) => setMode(e.target.value)}
           className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-base"
         >
-          <option value="separator">单卡片模式（完整内容）</option>
-          <option value="auto-split">多卡片模式（自动切分）</option>
+          <option value="auto-split">自动分页（按高度切分）</option>
+          <option value="separator">手动分页（---分隔）</option>
         </select>
       </div>
 

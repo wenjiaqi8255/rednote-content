@@ -117,7 +117,7 @@ function UnifiedEditPageContent({ params }: { params: Promise<{ id: string }> })
         title: '新卡片',
         markdown: '',
         theme: 'default',
-        mode: 'separator',
+        mode: 'auto-split',
       });
       console.log('[EditPage] Created new session, redirecting:', newSessionId);
       router.push(`/edit/${newSessionId}`);

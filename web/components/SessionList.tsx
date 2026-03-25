@@ -75,7 +75,7 @@ export default function SessionList({ onCreateNew, navigateOnSelect = false }: S
       title: '新卡片',
       markdown: '',
       theme: 'default',
-      mode: 'separator',
+      mode: 'auto-split',
     });
 
     if (onCreateNew) {
