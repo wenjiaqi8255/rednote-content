@@ -484,38 +484,44 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
 
         {/* Main Content Area */}
         <div className="w-full min-w-0 flex justify-center pt-4 md:pt-0">
-          <div className="max-w-[375px] md:max-w-4xl bg-gray-50 px-4">
-            <div className="flex flex-col gap-4 items-center">
-              {/* Navigation Arrows */}
-              <NavigationArrows
-                currentPage={currentPageIndex}
-                totalPages={pages.length}
-                onPrev={handlePrevPage}
-                onNext={handleNextPage}
-              />
+          <div className="max-w-[375px] md:max-w-5xl bg-gray-50 px-4">
+            {/* Desktop: grid with sidebar; Mobile: stacked layout */}
+            <div className="flex flex-col gap-4 items-center md:grid md:grid-cols-[1fr_auto] md:gap-6 md:items-start">
+              {/* Left side: Navigation + Preview Card + Page Indicators */}
+              <div className="flex flex-col gap-4 items-center flex-shrink-0">
+                {/* Navigation Arrows */}
+                <NavigationArrows
+                  currentPage={currentPageIndex}
+                  totalPages={pages.length}
+                  onPrev={handlePrevPage}
+                  onNext={handleNextPage}
+                />
 
-              {/* Preview Card */}
-              <CardPreview
-                sessionId={sessionId}
-                theme={currentTheme}
-                cardRef={cardRef}
-                innerCardRef={innerCardRef}
-                currentPageIndex={currentPageIndex}
-                pages={pages}
-              />
+                {/* Preview Card */}
+                <CardPreview
+                  sessionId={sessionId}
+                  theme={currentTheme}
+                  cardRef={cardRef}
+                  innerCardRef={innerCardRef}
+                  currentPageIndex={currentPageIndex}
+                  pages={pages}
+                />
 
-              {/* Page Indicators */}
-              <PageIndicators currentPage={currentPageIndex} totalPages={pages.length} />
+                {/* Page Indicators */}
+                <PageIndicators currentPage={currentPageIndex} totalPages={pages.length} />
+              </div>
 
-              {/* Theme Selector */}
-              <ThemeSelector
-                currentTheme={currentTheme}
-                onThemeChange={setCurrentTheme}
-                themes={themes}
-              />
+              {/* Right side: Theme Selector */}
+              <div className="flex-shrink-0">
+                <ThemeSelector
+                  currentTheme={currentTheme}
+                  onThemeChange={setCurrentTheme}
+                  themes={themes}
+                />
+              </div>
 
-              {/* Save Button */}
-              <div className="pt-4 pb-8 md:pb-12">
+              {/* Save Button - full width on mobile, centered on desktop */}
+              <div className="w-full pt-4 pb-8 md:pt-4 md:pb-8 md:col-span-2 md:flex md:justify-center">
                 <SaveButtonWrapper
                   sessionId={sessionId}
                   innerCardRef={innerCardRef}
