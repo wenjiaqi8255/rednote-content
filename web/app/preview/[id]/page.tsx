@@ -483,7 +483,7 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
         </ResponsiveSidebar>
 
         {/* Main Content Area */}
-        <div className="w-full min-w-0 flex justify-center pt-4 md:pt-0">
+        <div className="w-full min-w-0 flex justify-center pt-14 md:pt-6">
           <div className="max-w-[375px] md:max-w-5xl bg-gray-50 px-4">
             {/* Desktop: grid with sidebar; Mobile: stacked layout */}
             <div className="flex flex-col gap-4 items-center md:grid md:grid-cols-[1fr_auto] md:gap-6 md:items-start">
