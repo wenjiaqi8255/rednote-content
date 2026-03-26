@@ -44,14 +44,15 @@ export function ThemeSelector({ currentTheme, onThemeChange, themes }: ThemeSele
         选择喜欢的排版
       </div>
 
-      {/* Theme Buttons - Vertical Scroll */}
+      {/* Theme Buttons - Horizontal scroll on desktop */}
       <div
         style={{
           display: 'flex',
-          flexDirection: 'column',
+          flexDirection: 'row',
+          flexWrap: 'wrap',
           gap: '8px',
-          maxHeight: '240px',
-          overflowY: 'auto',
+          maxWidth: '280px',
+          overflowX: 'auto',
           // Hide scrollbar but keep functionality
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
@@ -67,14 +68,16 @@ export function ThemeSelector({ currentTheme, onThemeChange, themes }: ThemeSele
                 backgroundColor: isSelected ? '#E42313' : '#FFFFFF',
                 border: isSelected ? '2px solid #E42313' : '2px solid #E8E8E8',
                 borderRadius: '8px',
-                padding: '10px 16px',
+                padding: '8px 14px',
                 fontFamily: 'Inter',
-                fontSize: '14px',
+                fontSize: '13px',
                 fontWeight: '500',
                 color: isSelected ? '#FFFFFF' : '#0D0D0D',
                 cursor: 'pointer',
                 textAlign: 'left',
                 transition: 'all 0.2s ease',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
               }}
             >
               {THEME_LABELS[theme] || theme}
