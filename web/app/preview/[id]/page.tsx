@@ -94,6 +94,17 @@ function CardPreview({ sessionId, theme, cardRef, innerCardRef, currentPageIndex
   const hasValidatedRef = useRef(false);
   const [htmlContent, setHtmlContent] = useState('');
 
+  // Scale factor: card CSS is 1080px wide, container is 360px
+  const cardWidth = 1080;
+  const previewWidth = 360;
+  const scale = previewWidth / cardWidth;
+
+  // Extract the card's min-height from CSS and calculate visual height
+  // Card CSS: .card-container { min-height: 1440px }
+  // Scale = 360/1080 = 1/3, so visual height = 1440 * 1/3 = 480
+  const cardMinHeight = 1440;
+  const visualHeight = Math.ceil(cardMinHeight * scale); // 480
+
   console.log('[CardPreview] Rendering:', {
     sessionId,
     isLoading,
@@ -135,6 +146,13 @@ function CardPreview({ sessionId, theme, cardRef, innerCardRef, currentPageIndex
     generateHtml();
   }, [currentPageIndex, pages, session?.id, theme]);
 
+  // No need for ResizeObserver — we calculate height from card's min-height CSS
+  useEffect(() => {
+    if (!htmlContent) return;
+    // Height is calculated from card's min-height: 1440 * scale = 480px
+    // This matches the visual height of the scaled inner div
+  }, [htmlContent]);
+
   // Show loading state while data is being loaded
   if (isLoading) {
     console.log('[CardPreview] Showing loading state');
@@ -172,19 +190,13 @@ function CardPreview({ sessionId, theme, cardRef, innerCardRef, currentPageIndex
   const cardCss = cssMatch ? cssMatch[1] : '';
   const contentWithoutStyle = htmlContent.replace(/<style>[\s\S]*?<\/style>/, '');
 
-  // Scale factor: card CSS is 1080px wide, container is 375px
-  // Using 360px as the target card width for better fit
-  const cardWidth = 1080;
-  const previewWidth = 360;
-  const scale = previewWidth / cardWidth; // ~0.333
-
   return (
     <div
       ref={cardRef}
       className="mx-auto overflow-hidden rounded-lg border border-gray-200"
       style={{
         width: `${previewWidth}px`,
-        height: 'auto',
+        height: `${visualHeight}px`,
         minHeight: '200px',
         overflow: 'hidden',
         margin: '0 auto',
@@ -471,9 +483,9 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
         </ResponsiveSidebar>
 
         {/* Main Content Area */}
-        <div className="flex-1 min-w-0 flex justify-center pt-4 md:pt-0">
-          <div className="max-w-[375px] md:max-w-4xl bg-gray-50 min-h-full px-4">
-            <div className="flex flex-col gap-4">
+        <div className="w-full min-w-0 flex justify-center pt-4 md:pt-0">
+          <div className="max-w-[375px] md:max-w-4xl bg-gray-50 px-4">
+            <div className="flex flex-col gap-4 items-center">
               {/* Navigation Arrows */}
               <NavigationArrows
                 currentPage={currentPageIndex}
