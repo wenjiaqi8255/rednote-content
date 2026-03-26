@@ -130,11 +130,12 @@ function UnifiedEditPageContent({ params }: { params: Promise<{ id: string }> })
           <SessionList onCreateNew={handleCreateNew} navigateOnSelect={true} />
         </ResponsiveSidebar>
 
-        {/* Content area — offset by sidebar width on desktop */}
+        {/* Content area — offset by sidebar width on desktop, offset by mobile header on mobile */}
         <div
           className={`
             flex-1 min-w-0 flex flex-col
             ml-0 md:ml-80
+            pt-14 md:pt-0
             transition-transform duration-300 ease-in-out
             ${isSidebarOpen ? '-translate-x-full md:translate-x-0' : 'translate-x-0'}
           `}
