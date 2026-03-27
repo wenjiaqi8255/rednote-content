@@ -257,6 +257,20 @@ function SaveButtonWrapper({ sessionId, innerCardRef, pages, setCurrentPageIndex
           clonedCard.style.width = '1080px';
         }
 
+        // Remove padding from .card-container to capture only .card-inner content
+        // This eliminates the outer frame (gray/white border) around the actual content
+        const cardContainer = clonedDoc.querySelector('.card-container') as HTMLElement;
+        if (cardContainer) {
+          cardContainer.style.padding = '0';
+          cardContainer.style.background = 'transparent';
+        }
+
+        // Remove border-radius from .card-inner for rectangular capture (no rounded corners)
+        const cardInner = clonedDoc.querySelector('.card-inner') as HTMLElement;
+        if (cardInner) {
+          cardInner.style.borderRadius = '0';
+        }
+
         // Remove CSS rules with lab() / lch() color functions
         // html2canvas doesn't support these modern CSS color syntaxes
         const styleSheets = Array.from(clonedDoc.styleSheets);

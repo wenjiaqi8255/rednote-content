@@ -90,7 +90,7 @@ body {
 .card-container {
     width: 1080px;
     min-height: 1440px;
-    background: linear-gradient(180deg, #f3f3f3 0%, #f9f9f9 100%);
+    background: #ffffff;
     position: relative;
     padding: 50px;
     overflow: hidden;
