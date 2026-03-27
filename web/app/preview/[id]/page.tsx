@@ -64,9 +64,9 @@ function DesktopHeader({ sessionId }: { sessionId: string }) {
     <header
       className="hidden md:flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200"
     >
-      <h1 className="text-2xl font-semibold text-gray-900">
+      <h2 className="text-lg font-semibold text-gray-900">
         预览和生成
-      </h1>
+      </h2>
 
       <Link
         href={`/edit/${sessionId}`}
