@@ -1,0 +1,25 @@
+# Debug screenshots
+*.png
+
+# Playwright
+.playwright-mcp/
+playwright-report/
+
+# Skill files
+*.skill
+
+# Backup files
+*.backup
+
+# Planning (generated)
+.planning/
+
+# Dev docs
+web/DEBUGGING.md
+web/TDD_TESTS_SUMMARY.md
+web/TESTING-SUMMARY.md
+web/UNIFIED_ARCHITECTURE.md
+web/test-responsive.html
+
+# IDE
+.DS_Store

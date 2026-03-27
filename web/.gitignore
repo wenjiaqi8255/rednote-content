@@ -24,6 +24,23 @@
 .DS_Store
 *.pem
 
+# screenshots
+debug-*.png
+mobile-*.png
+preview-*.png
+fix-*.png
+desktop-*.png
+outer-shell-*.png
+pagination-*.png
+share-test.png
+edit-page.png
+
+# backup
+CLAUDE.md.backup
+
+# e2e output
+test-results/
+
 # debug
 npm-debug.log*
 yarn-debug.log*
