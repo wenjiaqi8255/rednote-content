@@ -93,14 +93,7 @@ export function SaveButton({ sessionId, title, onGenerateImage, onSaveAll, total
         }}
       >
         <Download width={18} height={18} color="#FFFFFF" />
-        <span
-          style={{
-            fontFamily: 'Space Grotesk',
-            fontSize: '15px',
-            fontWeight: '600',
-            color: '#FFFFFF',
-          }}
-        >
+        <span className="text-base font-semibold text-white">
           {isSaving ? (saveMode === 'all' ? '打包中...' : '保存中...') : '保存图片'}
         </span>
       </button>
@@ -125,14 +118,7 @@ export function SaveButton({ sessionId, title, onGenerateImage, onSaveAll, total
           }}
         >
           <FileArchive width={18} height={18} color="#E42313" />
-          <span
-            style={{
-              fontFamily: 'Space Grotesk',
-              fontSize: '15px',
-              fontWeight: '600',
-              color: '#E42313',
-            }}
-          >
+          <span className="text-base font-semibold text-red-600">
             {isSaving ? (saveMode === 'all' ? '打包中...' : '保存中...') : `保存全部 (${totalPages}张)`}
           </span>
         </button>

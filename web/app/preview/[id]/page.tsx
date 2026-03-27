@@ -81,13 +81,15 @@ function DesktopHeader({ sessionId }: { sessionId: string }) {
 /**
  * Card Preview Component
  */
-function CardPreview({ sessionId, theme, cardRef, innerCardRef, currentPageIndex, pages }: {
+function CardPreview({ sessionId, theme, cardRef, innerCardRef, currentPageIndex, pages, outerRingEnabled, borderRadius }: {
   sessionId: string;
   theme: Theme;
   cardRef: React.RefObject<HTMLDivElement | null>;
   innerCardRef: React.RefObject<HTMLDivElement | null>;
   currentPageIndex: number;
   pages: string[];
+  outerRingEnabled: boolean;
+  borderRadius: number;
 }) {
   const { sessions, isLoading } = useStorageContext();
   const router = useRouter();
@@ -101,9 +103,13 @@ function CardPreview({ sessionId, theme, cardRef, innerCardRef, currentPageIndex
 
   // Extract the card's min-height from CSS and calculate visual height
   // Card CSS: .card-container { min-height: 1440px }
-  // Scale = 360/1080 = 1/3, so visual height = 1440 * 1/3 = 480
+  // .card-inner { min-height: calc(1440px - 100px) = 1340px }
+  // When outerRingEnabled: padding=50, card-inner content = 1340px
+  // When !outerRingEnabled: padding=0, but card-inner min-height is still 1340px
+  // Scale = 360/1080 = 1/3
   const cardMinHeight = 1440;
-  const visualHeight = Math.ceil(cardMinHeight * scale); // 480
+  const innerCardMinHeight = 1340; // .card-inner min-height
+  const visualHeight = Math.ceil(innerCardMinHeight * scale); // 447px (larger to show full inner card)
 
   console.log('[CardPreview] Rendering:', {
     sessionId,
@@ -139,12 +145,15 @@ function CardPreview({ sessionId, theme, cardRef, innerCardRef, currentPageIndex
 
     const generateHtml = async () => {
       console.log('[CardPreview] Generating HTML for page:', currentPageIndex, 'theme:', theme);
-      const html = await generateXHSCard(currentMarkdown, theme);
+      const html = await generateXHSCard(currentMarkdown, theme, {
+        outerRingEnabled,
+        borderRadius,
+      });
       setHtmlContent(html);
     };
 
     generateHtml();
-  }, [currentPageIndex, pages, session?.id, theme]);
+  }, [currentPageIndex, pages, session?.id, theme, outerRingEnabled, borderRadius]);
 
   // No need for ResizeObserver — we calculate height from card's min-height CSS
   useEffect(() => {
@@ -196,8 +205,8 @@ function CardPreview({ sessionId, theme, cardRef, innerCardRef, currentPageIndex
       className="mx-auto overflow-hidden rounded-lg border border-gray-200"
       style={{
         width: `${previewWidth}px`,
-        height: `${visualHeight}px`,
-        minHeight: '200px',
+        minHeight: `${visualHeight}px`,
+        height: 'auto',
         overflow: 'hidden',
         margin: '0 auto',
       }}
@@ -413,13 +422,19 @@ function NavigationArrows({
  */
 function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }> }) {
   const { id: sessionId } = React.use(params);
-  const { sessions, isLoading } = useStorageContext();
+  const { sessions, isLoading, updateCurrentSession, selectSession } = useStorageContext();
+  const session = sessions.find((s) => s.id === sessionId);
+
   const [currentTheme, setCurrentTheme] = useState<Theme>('default');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Hidden by default for focused preview
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [pages, setPages] = useState<string[]>([]);
   const cardRef = useRef<HTMLDivElement>(null);
   const innerCardRef = useRef<HTMLDivElement>(null);
+
+  // 卡片样式状态
+  const [outerRingEnabled, setOuterRingEnabled] = useState(true);
+  const [borderRadius, setBorderRadius] = useState(20);
 
   const themes: Theme[] = [
     'default',
@@ -432,7 +447,26 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
     'sketch',
   ];
 
-  const session = sessions.find((s) => s.id === sessionId);
+  // 从 session 读取设置
+  useEffect(() => {
+    if (session) {
+      setOuterRingEnabled(session.outerRingEnabled ?? true);
+      setBorderRadius(session.borderRadius ?? 20);
+    }
+  }, [session?.outerRingEnabled, session?.borderRadius]);
+
+  // 保存设置到 session
+  const handleOuterRingChange = (enabled: boolean) => {
+    setOuterRingEnabled(enabled);
+    selectSession(sessionId);
+    updateCurrentSession({ outerRingEnabled: enabled });
+  };
+
+  const handleBorderRadiusChange = (radius: number) => {
+    setBorderRadius(radius);
+    selectSession(sessionId);
+    updateCurrentSession({ borderRadius: radius });
+  };
 
   // Split markdown into pages when session changes
   useEffect(() => {
@@ -498,7 +532,7 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
 
         {/* Main Content Area */}
         <div className="w-full min-w-0 flex justify-center pt-14 md:pt-6">
-          <div className="max-w-[375px] md:max-w-5xl bg-gray-50 px-4">
+          <div className="w-full md:max-w-5xl bg-gray-50 px-4">
             {/* Desktop: grid with sidebar; Mobile: stacked layout */}
             <div className="flex flex-col gap-4 items-center md:grid md:grid-cols-[1fr_auto] md:gap-6 md:items-start">
               {/* Left side: Navigation + Preview Card + Page Indicators */}
@@ -519,6 +553,8 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
                   innerCardRef={innerCardRef}
                   currentPageIndex={currentPageIndex}
                   pages={pages}
+                  outerRingEnabled={outerRingEnabled}
+                  borderRadius={borderRadius}
                 />
 
                 {/* Page Indicators */}
@@ -531,6 +567,10 @@ function UnifiedPreviewPageContent({ params }: { params: Promise<{ id: string }>
                   currentTheme={currentTheme}
                   onThemeChange={setCurrentTheme}
                   themes={themes}
+                  outerRingEnabled={outerRingEnabled}
+                  onOuterRingChange={handleOuterRingChange}
+                  borderRadius={borderRadius}
+                  onBorderRadiusChange={handleBorderRadiusChange}
                 />
               </div>
 

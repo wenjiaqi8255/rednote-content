@@ -62,10 +62,10 @@ function HomeContent() {
             {/* Welcome message when no session is selected */}
             <div className="text-center py-20">
               <div className="text-6xl mb-5 opacity-30">✨</div>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-3">
+              <h2 className="text-xl font-semibold text-gray-900 mb-3">
                 欢迎使用小红书卡片生成器
               </h2>
-              <p className="text-gray-500 mb-8">
+              <p className="text-sm text-gray-500 mb-8">
                 从左侧选择一个会话开始编辑，或创建新卡片
               </p>
               <div className="space-y-3 text-sm text-gray-600">

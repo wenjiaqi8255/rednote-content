@@ -172,7 +172,7 @@ export default function MultiCardPreview({ markdown, theme, sessionId }: MultiCa
           <div key={index} className="space-y-3">
             {/* Card Header */}
             <div className="flex items-center justify-between">
-              <h4 className="text-md font-semibold text-gray-800">
+              <h4 className="text-sm font-semibold text-gray-800">
                 Card {index + 1} / {cardContents.length}
               </h4>
               {capturedCards.has(index) && (

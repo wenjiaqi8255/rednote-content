@@ -47,13 +47,7 @@ export function StatusBar({ time, className = '' }: StatusBarProps) {
       }}
     >
       {/* Time Label */}
-      <span
-        style={{
-          fontFamily: 'Inter',
-          fontSize: '16px',
-          fontWeight: '600',
-        }}
-      >
+      <span className="text-base font-semibold">
         {displayTime}
       </span>
 

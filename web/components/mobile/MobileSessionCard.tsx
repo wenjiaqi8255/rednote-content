@@ -60,39 +60,22 @@ export function MobileSessionCard({
       aria-label={`Session: ${title}`}
     >
       {/* Title */}
-      <div
-        style={{
-          fontFamily: 'Space Grotesk',
-          fontSize: '15px',
-          fontWeight: '500',
-          color: titleColor,
-        }}
+      <p
+        className="text-base font-medium"
+        style={{ color: titleColor }}
       >
         {title}
-      </div>
+      </p>
 
       {/* Preview */}
-      <div
-        style={{
-          fontFamily: 'Inter',
-          fontSize: '13px',
-          color: '#7A7A7A',
-          width: '100%',
-        }}
-      >
+      <p className="text-sm text-gray-500 truncate">
         {preview}
-      </div>
+      </p>
 
       {/* Date */}
-      <div
-        style={{
-          fontFamily: 'Inter',
-          fontSize: '11px',
-          color: '#B0B0B0',
-        }}
-      >
+      <p className="text-xs text-gray-400">
         {date}
-      </div>
+      </p>
 
       {/* Bottom Divider */}
       <div

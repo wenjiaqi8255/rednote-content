@@ -468,13 +468,24 @@ export async function convertMarkdownToHtml(
 }
 
 /**
+ * Options for card style customization
+ */
+export interface CardStyleOptions {
+  outerRingEnabled?: boolean;  // 是否显示外圈，默认 true
+  borderRadius?: number;        // 圆角大小 (0-40px)，默认 20
+}
+
+/**
  * Generate complete XHS card HTML
  * Uses card.html template and loads CSS dynamically
  */
 export async function generateXHSCard(
   markdown: string,
-  theme: Theme
+  theme: Theme,
+  options?: CardStyleOptions
 ): Promise<string> {
+  const { outerRingEnabled = true, borderRadius = 20 } = options || {};
+
   // Validate theme
   if (!AVAILABLE_THEMES.includes(theme)) {
     throw new Error(
@@ -520,8 +531,18 @@ export async function generateXHSCard(
   const scopedBaseCss = scopeCss(baseCss);
   const scopedThemeCss = scopeCss(themeCss);
 
-  // 5. Assemble final HTML - inject CSS into the style tag content
-  const combinedCss = scopedBaseCss + '\n' + scopedThemeCss;
+  // 5. Generate dynamic CSS for card style options
+  const dynamicCss = `
+.card-container {
+  padding: ${outerRingEnabled ? '50px' : '0'} !important;
+}
+.card-inner {
+  border-radius: ${borderRadius}px !important;
+}
+`;
+
+  // 6. Assemble final HTML - inject CSS into the style tag content
+  const combinedCss = scopedBaseCss + '\n' + scopedThemeCss + '\n' + dynamicCss;
 
   // Replace the style tag content (everything between <style> and </style>)
   const htmlWithCss = template.replace(

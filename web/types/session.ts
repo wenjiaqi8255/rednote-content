@@ -7,6 +7,9 @@ export interface Session {
   createdAt: number;
   updatedAt: number;
   imageData?: string;
+  // 卡片样式设置
+  outerRingEnabled?: boolean;  // 是否显示外圈，默认 true
+  borderRadius?: number;        // 圆角大小 (0-40px)，默认 20
 }
 
 export interface StorageData {

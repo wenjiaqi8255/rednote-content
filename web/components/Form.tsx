@@ -54,7 +54,7 @@ export default function Form({ onSubmit, isLoading, defaultValue }: FormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* 标题输入 */}
       <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="title" className="block text-sm text-gray-700 mb-2">
           标题（可选）
         </label>
         <input
@@ -69,7 +69,7 @@ export default function Form({ onSubmit, isLoading, defaultValue }: FormProps) {
 
       {/* Markdown 输入 */}
       <div>
-        <label htmlFor="markdown" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="markdown" className="block text-sm text-gray-700 mb-2">
           Markdown 内容 *
         </label>
         <textarea
@@ -91,7 +91,7 @@ export default function Form({ onSubmit, isLoading, defaultValue }: FormProps) {
 
       {/* 主题选择 */}
       <div>
-        <label htmlFor="theme" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="theme" className="block text-sm text-gray-700 mb-2">
           主题风格
         </label>
         <select
@@ -113,7 +113,7 @@ export default function Form({ onSubmit, isLoading, defaultValue }: FormProps) {
 
       {/* 分页模式 */}
       <div>
-        <label htmlFor="mode" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="mode" className="block text-sm text-gray-700 mb-2">
           分页模式
         </label>
         <select

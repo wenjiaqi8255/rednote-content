@@ -16,7 +16,7 @@ export default function SessionDetail() {
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
             请选择或创建一个会话
           </h3>
-          <p className="text-gray-500">
+          <p className="text-sm text-gray-500">
             从左侧列表选择现有会话，或创建新会话开始
           </p>
         </div>
@@ -35,7 +35,7 @@ export default function SessionDetail() {
         <h2 className="text-lg font-semibold text-gray-900">
           {currentSession.title || '未命名会话'}
         </h2>
-        <p className="text-sm text-gray-500">
+        <p className="text-xs text-gray-500">
           最后更新: {new Date(currentSession.updatedAt).toLocaleString('zh-CN')}
         </p>
       </div>
@@ -44,7 +44,7 @@ export default function SessionDetail() {
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
         {/* Form Section */}
         <div>
-          <h3 className="text-md font-semibold text-gray-800 mb-3">
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">
             编辑内容
           </h3>
           <Form
@@ -62,7 +62,7 @@ export default function SessionDetail() {
 
         {/* Preview Section */}
         <div>
-          <h3 className="text-md font-semibold text-gray-800 mb-3">
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">
             卡片预览
           </h3>
           {currentSession.mode === 'auto-split' ? (
@@ -84,7 +84,7 @@ export default function SessionDetail() {
         {/* Saved Image Display */}
         {currentSession.imageData && (
           <div>
-            <h3 className="text-md font-semibold text-gray-800 mb-3">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">
               已保存的图片
             </h3>
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">

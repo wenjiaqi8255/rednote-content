@@ -29,7 +29,7 @@ export default function SessionList({ onCreateNew, navigateOnSelect = false }: S
           <h2 className="text-2xl font-semibold text-gray-900 mb-1">
             我的作品
           </h2>
-          <p className="text-sm text-gray-500 mb-5">
+          <p className="text-xs text-gray-500 mb-5">
             加载中...
           </p>
 
@@ -135,7 +135,7 @@ export default function SessionList({ onCreateNew, navigateOnSelect = false }: S
         <h2 className="text-2xl font-semibold text-gray-900 mb-1">
           我的作品
         </h2>
-        <p className="text-sm text-gray-500 mb-5">
+        <p className="text-xs text-gray-500 mb-5">
           {sessions.length} 个卡片
         </p>
 
@@ -166,10 +166,10 @@ export default function SessionList({ onCreateNew, navigateOnSelect = false }: S
         {sessions.length === 0 ? (
           <div className="text-center py-16 animate-fade-in-up">
             <div className="text-6xl mb-5 opacity-30">⋄</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
               开始创作
-            </h3>
-            <p className="text-gray-500 text-sm">
+            </h2>
+            <p className="text-sm text-gray-500">
               点击上方按钮创建你的第一张卡片
             </p>
           </div>
@@ -194,7 +194,7 @@ export default function SessionList({ onCreateNew, navigateOnSelect = false }: S
                   >
                     {/* Session Title */}
                     <div className="flex items-start justify-between mb-2">
-                      <h3 className="font-semibold flex-1 pr-2 text-gray-900">
+                      <h3 className="text-sm font-semibold flex-1 pr-2 text-gray-900">
                         {session.title || '未命名卡片'}
                       </h3>
 
@@ -232,7 +232,7 @@ export default function SessionList({ onCreateNew, navigateOnSelect = false }: S
                       >
                         {session.theme}
                       </span>
-                      <span className="text-gray-400">
+                      <span className="text-xs text-gray-400">
                         {formatDate(session.updatedAt)}
                       </span>
                     </div>

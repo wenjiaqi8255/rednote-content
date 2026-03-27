@@ -1,8 +1,27 @@
 /**
- * Design System Tokens
+ * Design System Tokens — Reference Document
  *
- * Centralized design tokens for consistent UI across the application.
- * Following 2026 design trends: modern, clean, and accessible.
+ * This file documents the canonical typography scale used across the UI.
+ * Tailwind utility classes are the implementation layer — use the
+ * token names below as the authoritative reference.
+ *
+ * Font Scale (only 6 types — never add more):
+ * ─────────────────────────────────────────────────────────
+ * h1      text-2xl font-semibold  Page titles (h1, page headers)
+ * h2      text-xl font-semibold   Section titles (h2, card headers)
+ * h3      text-lg font-semibold   Component titles, buttons
+ * body    text-sm font-medium     Body text, labels, inputs
+ * caption text-xs               Timestamps, meta info, hints
+ * mono    text-sm font-mono       Code, textarea content
+ * ─────────────────────────────────────────────────────────
+ *
+ * Color tokens:
+ *   text-gray-700  ≈ #374151 — secondary labels
+ *   text-gray-500  ≈ #6b7280 — hints, captions (matches #7A7A7A)
+ *   text-gray-900  ≈ #111827 — primary text (matches #0D0D0D closely)
+ *
+ * Note: These are Tailwind CSS classes used directly in components.
+ * Do NOT import this file for token values — consult this doc instead.
  */
 
 export const colors = {
